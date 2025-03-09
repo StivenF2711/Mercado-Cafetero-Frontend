@@ -14,7 +14,7 @@ function Login() {
     setError(null); // Limpiar error previo
 
     // Verificar si la URL del backend está definida correctamente
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const backendUrl = "https://mercadocafetero.up.railway.app";
     if (!backendUrl) {
       setError("Error interno: No se ha configurado la URL del backend.");
       return;

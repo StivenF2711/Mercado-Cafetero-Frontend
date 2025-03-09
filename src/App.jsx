@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Login from "./pages/login";
-import Proveedores from "./pages/proveedores";
+import Proveedores from "./pages/Proveedores";
 import PrivateRoute from "./components/PrivateRoute";
 import Categorias from "./pages/categorias";
 

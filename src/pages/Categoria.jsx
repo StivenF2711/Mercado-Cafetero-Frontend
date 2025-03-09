@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL;
+const API_URL = "https://mercadocafetero.up.railway.app";;
 
 function Categorias() {
   const [categorias, setCategorias] = useState([]);

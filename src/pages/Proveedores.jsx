@@ -12,7 +12,7 @@ function Proveedores() {
   useEffect(() => {
     obtenerProveedores();
     obtenerCategorias();
-  }, []);
+  }, );
 
   const obtenerProveedores = () => {
     const token = localStorage.getItem("token");

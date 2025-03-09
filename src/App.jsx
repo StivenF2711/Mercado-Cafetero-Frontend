@@ -3,7 +3,7 @@ import Navbar from "./components/Navbar";
 import Login from "./pages/login";
 import Proveedores from "./pages/proveedores";
 import PrivateRoute from "./components/PrivateRoute";
-import Categorias from "./pages/Categorias";
+import Categorias from "./pages/categorias";
 
 function App() {
     return (

@@ -12,19 +12,19 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/login/", {
-        username,
-        password,
-      });
-  
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/login/`, 
+        { username, password }
+      );
+
       // Guardar el token en el almacenamiento local
       localStorage.setItem("token", response.data.token);
       console.log("Token guardado:", response.data.token); // 🔹 Verificar si el token se guarda
-  
+
       // Verificar hacia dónde se redirige el usuario
-      const redirectTo = location.state?.from || "/proveedores"; // 🔹 Cambié "/proveedores" por "/categorias"
+      const redirectTo = location.state?.from || "/proveedores";
       console.log("Redirigiendo a:", redirectTo);
-  
+
       navigate(redirectTo);
     } catch (error) {
       console.error("Error en login:", error);

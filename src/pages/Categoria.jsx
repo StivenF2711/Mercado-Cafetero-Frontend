@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+
 function Categorias() {
   const [categorias, setCategorias] = useState([]);
   const [nuevaCategoria, setNuevaCategoria] = useState({ nombre: "" });
@@ -21,8 +23,13 @@ function Categorias() {
       return;
     }
 
+    if (!API_URL) {
+      console.error("API_URL no está definido. Revisa tu archivo .env.");
+      return;
+    }
+
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/categorias/", {
+      const response = await axios.get(`${API_URL}/api/categorias/`, {
         headers: { Authorization: `Token ${token}` },
       });
       setCategorias(response.data);
@@ -35,14 +42,12 @@ function Categorias() {
 
   const agregarCategoria = async () => {
     const token = localStorage.getItem("token");
-    if (!token) return;
+    if (!token || !API_URL) return;
 
     try {
-      await axios.post(
-        "http://127.0.0.1:8000/api/categorias/",
-        nuevaCategoria,
-        { headers: { Authorization: `Token ${token}` } }
-      );
+      await axios.post(`${API_URL}/api/categorias/`, nuevaCategoria, {
+        headers: { Authorization: `Token ${token}` },
+      });
       setNuevaCategoria({ nombre: "" });
       obtenerCategorias();
     } catch (error) {
@@ -52,14 +57,12 @@ function Categorias() {
 
   const actualizarCategoria = async (id) => {
     const token = localStorage.getItem("token");
-    if (!token) return;
+    if (!token || !API_URL) return;
 
     try {
-      await axios.put(
-        `http://127.0.0.1:8000/api/categorias/${id}/`,
-        editarCategoria,
-        { headers: { Authorization: `Token ${token}` } }
-      );
+      await axios.put(`${API_URL}/api/categorias/${id}/`, editarCategoria, {
+        headers: { Authorization: `Token ${token}` },
+      });
       setEditarCategoria(null);
       obtenerCategorias();
     } catch (error) {
@@ -69,10 +72,10 @@ function Categorias() {
 
   const eliminarCategoria = async (id) => {
     const token = localStorage.getItem("token");
-    if (!token) return;
+    if (!token || !API_URL) return;
 
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/categorias/${id}/`, {
+      await axios.delete(`${API_URL}/api/categorias/${id}/`, {
         headers: { Authorization: `Token ${token}` },
       });
       obtenerCategorias();
@@ -80,6 +83,7 @@ function Categorias() {
       console.error("Error al eliminar categoría:", error);
     }
   };
+
 
   return (
     <div style={styles.pageContainer}>

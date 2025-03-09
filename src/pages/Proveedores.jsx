@@ -12,14 +12,14 @@ function Proveedores() {
   useEffect(() => {
     obtenerProveedores();
     obtenerCategorias();
-  }, );
+  }, []);
 
   const obtenerProveedores = () => {
     const token = localStorage.getItem("token");
     if (!token) return navigate("/");
 
     axios
-      .get("http://127.0.0.1:8000/api/proveedores/", {
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/proveedores/`, {
         headers: { Authorization: `Token ${token}` },
       })
       .then((response) => setProveedores(response.data))
@@ -29,7 +29,7 @@ function Proveedores() {
   const obtenerCategorias = () => {
     const token = localStorage.getItem("token");
     axios
-      .get("http://127.0.0.1:8000/api/categorias/", {
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/categorias/`, {
         headers: { Authorization: `Token ${token}` },
       })
       .then((response) => setCategorias(response.data))
@@ -40,7 +40,7 @@ function Proveedores() {
     const token = localStorage.getItem("token");
     axios
       .post(
-        "http://127.0.0.1:8000/api/proveedores/",
+        `${import.meta.env.VITE_BACKEND_URL}/api/proveedores/`,
         nuevoProveedor,
         { headers: { Authorization: `Token ${token}` } }
       )
@@ -55,7 +55,7 @@ function Proveedores() {
     const token = localStorage.getItem("token");
     axios
       .put(
-        `http://127.0.0.1:8000/api/proveedores/${id}/`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/proveedores/${id}/`,
         editarProveedor,
         { headers: { Authorization: `Token ${token}` } }
       )
@@ -69,12 +69,13 @@ function Proveedores() {
   const eliminarProveedor = (id) => {
     const token = localStorage.getItem("token");
     axios
-      .delete(`http://127.0.0.1:8000/api/proveedores/${id}/`, {
+      .delete(`${import.meta.env.VITE_BACKEND_URL}/api/proveedores/${id}/`, {
         headers: { Authorization: `Token ${token}` },
       })
       .then(() => obtenerProveedores())
       .catch((error) => console.error("Error al eliminar:", error));
   };
+
 
   return (
     <div style={styles.pageContainer}>

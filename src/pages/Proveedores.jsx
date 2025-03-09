@@ -9,6 +9,8 @@ function Proveedores() {
   const [editarProveedor, setEditarProveedor] = useState(null);
   const navigate = useNavigate();
 
+  const API_URL = "https://mercadocafetero.up.railway.app"; // 🔹 Definir la URL base
+
   useEffect(() => {
     obtenerProveedores();
     obtenerCategorias();
@@ -19,7 +21,7 @@ function Proveedores() {
     if (!token) return navigate("/");
 
     axios
-      .get(`${import.meta.env.VITE_BACKEND_URL}/api/proveedores/`, {
+      .get(`${API_URL}/api/proveedores/`, {
         headers: { Authorization: `Token ${token}` },
       })
       .then((response) => setProveedores(response.data))
@@ -29,7 +31,7 @@ function Proveedores() {
   const obtenerCategorias = () => {
     const token = localStorage.getItem("token");
     axios
-      .get(`${import.meta.env.VITE_BACKEND_URL}/api/categorias/`, {
+      .get(`${API_URL}/api/categorias/`, {
         headers: { Authorization: `Token ${token}` },
       })
       .then((response) => setCategorias(response.data))
@@ -40,7 +42,7 @@ function Proveedores() {
     const token = localStorage.getItem("token");
     axios
       .post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/proveedores/`,
+        `${API_URL}/api/proveedores/`,
         nuevoProveedor,
         { headers: { Authorization: `Token ${token}` } }
       )
@@ -55,7 +57,7 @@ function Proveedores() {
     const token = localStorage.getItem("token");
     axios
       .put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/proveedores/${id}/`,
+        `${API_URL}/api/proveedores/${id}/`,
         editarProveedor,
         { headers: { Authorization: `Token ${token}` } }
       )
@@ -69,12 +71,13 @@ function Proveedores() {
   const eliminarProveedor = (id) => {
     const token = localStorage.getItem("token");
     axios
-      .delete(`${import.meta.env.VITE_BACKEND_URL}/api/proveedores/${id}/`, {
+      .delete(`${API_URL}/api/proveedores/${id}/`, {
         headers: { Authorization: `Token ${token}` },
       })
       .then(() => obtenerProveedores())
       .catch((error) => console.error("Error al eliminar:", error));
   };
+
 
 
   return (

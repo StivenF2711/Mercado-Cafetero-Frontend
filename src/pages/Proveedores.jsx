@@ -40,18 +40,33 @@ function Proveedores() {
 
   const agregarProveedor = () => {
     const token = localStorage.getItem("token");
-    axios
-      .post(
+
+    // 📌 Asegurar que los datos sean correctos antes de enviar
+    const proveedorNuevo = {
+        ...nuevoProveedor,
+        telefono: nuevoProveedor.telefono?.trim() === "" ? "000-000-0000" : nuevoProveedor.telefono,  // ✅ Teléfono por defecto
+        dias_visita: Array.isArray(nuevoProveedor.dias_visita) 
+            ? nuevoProveedor.dias_visita 
+            : nuevoProveedor.dias_visita.replace(/[\[\]']+/g, '').split(",").map(d => d.trim()), // ✅ Formato correcto
+    };
+
+    axios.post(
         `${API_URL}/api/proveedores/`,
-        nuevoProveedor,
-        { headers: { Authorization: `Token ${token}` } }
-      )
-      .then(() => {
-        setNuevoProveedor({ nombre: "", categoria: "", dias_visita: [] });
+        proveedorNuevo,
+        { 
+            headers: { 
+                Authorization: `Token ${token}`,
+                "Content-Type": "application/json"
+            }
+        }
+    )
+    .then(() => {
+        setNuevoProveedor({ nombre: "", categoria: "", telefono: "", dias_visita: [] }); // 🔹 Limpieza de formulario
         obtenerProveedores();
-      })
-      .catch((error) => console.error("Error al agregar:", error));
-  };
+    })
+    .catch((error) => console.error("Error al agregar:", error));
+};
+
 
   const actualizarProveedor = (id) => {
     const token = localStorage.getItem("token");

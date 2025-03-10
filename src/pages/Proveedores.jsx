@@ -90,6 +90,9 @@ const actualizarProveedor = (id) => {
       dias_visita: diasVisitaFormateados, // ✅ Ahora en formato correcto
   };
 
+  // 🔍 Mostrar en consola qué datos se están enviando
+  console.log("Datos enviados en la actualización:", JSON.stringify(proveedorActualizado, null, 2));
+
   axios.put(
       `${API_URL}/api/proveedores/${id}/`,
       proveedorActualizado,
@@ -106,9 +109,6 @@ const actualizarProveedor = (id) => {
   })
   .catch((error) => console.error("Error al actualizar:", error));
 };
-
-
-
 
   const eliminarProveedor = (id) => {
     const token = localStorage.getItem("token");

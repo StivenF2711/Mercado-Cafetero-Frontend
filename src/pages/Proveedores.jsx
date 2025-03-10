@@ -46,7 +46,7 @@ function Proveedores() {
         telefono: nuevoProveedor.telefono?.trim() === "" ? "000-000-0000" : nuevoProveedor.telefono,
         dias_visita: Array.isArray(nuevoProveedor.dias_visita) 
             ? nuevoProveedor.dias_visita 
-            : nuevoProveedor.dias_visita.replace(/[\[\]']+/g, '').split(",").map(d => d.trim()),
+            : nuevoProveedor.dias_visita.replace(/[[\]']+/g, '').split(",").map(d => d.trim()),
     };
 
     console.log("Enviando datos:", proveedorNuevo); // 🛠️ Verifica que los datos sean correctos

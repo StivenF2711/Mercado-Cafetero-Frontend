@@ -85,7 +85,7 @@ function Proveedores() {
       </header>
 
       <div style={styles.container}>
-        {/* Formulario para agregar proveedor */}
+        {/* 📝 Formulario para agregar proveedores */}
         <div style={styles.form}>
           <input
             type="text"
@@ -192,9 +192,9 @@ const styles = {
     width: "100%",
     backgroundColor: "#D4A373",
     padding: "20px",
-    display: "flex", // Asegura que los elementos se alineen correctamente
-    justifyContent: "center", // Centra el contenido horizontalmente
-    alignItems: "center", // Centra verticalmente (por si el texto no está bien alineado)
+    display: "flex", 
+    justifyContent: "center",
+    alignItems: "center", 
     borderRadius: "10px",
     marginBottom: "20px",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
@@ -262,7 +262,7 @@ const styles = {
     cursor: "pointer",
   },
   name: {
-    color: "white",  // <-- Cámbialo a "white" o el color que prefieras
+    color: "black",
     fontWeight: "bold",
   },
   

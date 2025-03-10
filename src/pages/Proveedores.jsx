@@ -56,29 +56,32 @@ function Proveedores() {
   const actualizarProveedor = (id) => {
     const token = localStorage.getItem("token");
 
-    console.log("Datos que se enviarán en la actualización:", editarProveedor);
+    // 📌 Asegurar que los datos sean correctos antes de enviar
+    const proveedorActualizado = {
+        ...editarProveedor,
+        telefono: editarProveedor.telefono.trim() === "" ? "000-000-0000" : editarProveedor.telefono,  // ✅ Teléfono por defecto
+        dias_visita: Array.isArray(editarProveedor.dias_visita) 
+            ? editarProveedor.dias_visita 
+            : editarProveedor.dias_visita.replace(/[[\]']+/g, '').split(",").map(d => d.trim()), // ✅ Formato correcto
+    };
 
-    axios
-      .put(
+    axios.put(
         `${API_URL}/api/proveedores/${id}/`,
-        editarProveedor,
-        { headers: { 
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json" 
-        }}
-      )
-      .then(() => {
+        proveedorActualizado,
+        { 
+            headers: { 
+                Authorization: `Token ${token}`,
+                "Content-Type": "application/json"
+            }
+        }
+    )
+    .then(() => {
         setEditarProveedor(null);
         obtenerProveedores();
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.error("Error al actualizar:", error.response.data);
-        } else {
-          console.error("Error al actualizar:", error.message);
-        }
-      });
+    })
+    .catch((error) => console.error("Error al actualizar:", error));
 };
+
 
 
   const eliminarProveedor = (id) => {

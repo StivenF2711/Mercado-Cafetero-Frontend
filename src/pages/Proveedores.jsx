@@ -69,34 +69,44 @@ function Proveedores() {
 };
 
 
-  const actualizarProveedor = (id) => {
-    const token = localStorage.getItem("token");
+const actualizarProveedor = (id) => {
+  const token = localStorage.getItem("token");
 
-    // 📌 Asegurar que los datos sean correctos antes de enviar
-    const proveedorActualizado = {
-        ...editarProveedor,
-        telefono: editarProveedor.telefono.trim() === "" ? "000-000-0000" : editarProveedor.telefono,  // ✅ Teléfono por defecto
-        dias_visita: Array.isArray(editarProveedor.dias_visita) 
-            ? editarProveedor.dias_visita 
-            : editarProveedor.dias_visita.replace(/[[\]']+/g, '').split(",").map(d => d.trim()), // ✅ Formato correcto
-    };
+  // 📌 Verificar y formatear `dias_visita`
+  let diasVisitaFormateados = [];
+  if (Array.isArray(editarProveedor.dias_visita)) {
+      diasVisitaFormateados = editarProveedor.dias_visita;
+  } else if (typeof editarProveedor.dias_visita === "string") {
+      diasVisitaFormateados = editarProveedor.dias_visita
+          .replace(/[[\]']+/g, '') // Elimina corchetes y comillas
+          .split(",") // Divide por comas
+          .map(d => d.trim()); // Quita espacios en blanco
+  }
 
-    axios.put(
-        `${API_URL}/api/proveedores/${id}/`,
-        proveedorActualizado,
-        { 
-            headers: { 
-                Authorization: `Token ${token}`,
-                "Content-Type": "application/json"
-            }
-        }
-    )
-    .then(() => {
-        setEditarProveedor(null);
-        obtenerProveedores();
-    })
-    .catch((error) => console.error("Error al actualizar:", error));
+  // 📌 Asegurar que el teléfono tenga un valor predeterminado
+  const proveedorActualizado = {
+      ...editarProveedor,
+      telefono: editarProveedor.telefono?.trim() ? editarProveedor.telefono : "000-000-0000",
+      dias_visita: diasVisitaFormateados, // ✅ Ahora en formato correcto
+  };
+
+  axios.put(
+      `${API_URL}/api/proveedores/${id}/`,
+      proveedorActualizado,
+      { 
+          headers: { 
+              Authorization: `Token ${token}`,
+              "Content-Type": "application/json"
+          }
+      }
+  )
+  .then(() => {
+      setEditarProveedor(null);
+      obtenerProveedores();
+  })
+  .catch((error) => console.error("Error al actualizar:", error));
 };
+
 
 
 

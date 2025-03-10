@@ -256,6 +256,11 @@ const styles = {
     flexDirection: "column",
     alignItems: "center",
   },
+  name: {
+    color: "#5B3A29",
+    fontWeight: "bold",
+    marginBottom: "10px",
+  }
 };
 
 export default Categorias;

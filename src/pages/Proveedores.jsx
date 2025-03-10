@@ -72,26 +72,14 @@ function Proveedores() {
 const actualizarProveedor = (id) => {
   const token = localStorage.getItem("token");
 
-  // 📌 Verificar y formatear `dias_visita`
-  let diasVisitaFormateados = [];
-  if (Array.isArray(editarProveedor.dias_visita)) {
-      diasVisitaFormateados = editarProveedor.dias_visita;
-  } else if (typeof editarProveedor.dias_visita === "string") {
-      diasVisitaFormateados = editarProveedor.dias_visita
-          .replace(/[[\]']+/g, '') // Elimina corchetes y comillas
-          .split(",") // Divide por comas
-          .map(d => d.trim()); // Quita espacios en blanco
-  }
-
-  // 📌 Asegurar que el teléfono tenga un valor predeterminado
+  // 📌 Asegurar que los datos sean correctos antes de enviar
   const proveedorActualizado = {
       ...editarProveedor,
-      telefono: editarProveedor.telefono?.trim() ? editarProveedor.telefono : "000-000-0000",
-      dias_visita: diasVisitaFormateados, // ✅ Ahora en formato correcto
+      telefono: editarProveedor.telefono.trim() === "" ? "000-000-0000" : editarProveedor.telefono,  // ✅ Teléfono por defecto
+      dias_visita: Array.isArray(editarProveedor.dias_visita) 
+          ? editarProveedor.dias_visita 
+          : editarProveedor.dias_visita.replace(/[[\]']+/g, '').split(",").map(d => d.trim()), // ✅ Formato correcto
   };
-
-  // 🔍 Mostrar en consola qué datos se están enviando
-  console.log("Datos enviados en la actualización:", JSON.stringify(proveedorActualizado, null, 2));
 
   axios.put(
       `${API_URL}/api/proveedores/${id}/`,
@@ -109,6 +97,9 @@ const actualizarProveedor = (id) => {
   })
   .catch((error) => console.error("Error al actualizar:", error));
 };
+
+
+
 
   const eliminarProveedor = (id) => {
     const token = localStorage.getItem("token");

@@ -5,7 +5,7 @@ import axios from "axios";
 function Proveedores() {
   const [proveedores, setProveedores] = useState([]);
   const [categorias, setCategorias] = useState([]);
-  const [nuevoProveedor, setNuevoProveedor] = useState({ nombre: "", categoria: "" });
+  const [nuevoProveedor, setNuevoProveedor] = useState({ nombre: "", categoria: "", dias_visita: [] });
   const [editarProveedor, setEditarProveedor] = useState(null);
   const navigate = useNavigate();
 
@@ -47,7 +47,7 @@ function Proveedores() {
         { headers: { Authorization: `Token ${token}` } }
       )
       .then(() => {
-        setNuevoProveedor({ nombre: "", categoria: "" });
+        setNuevoProveedor({ nombre: "", categoria: "", dias_visita: [] });
         obtenerProveedores();
       })
       .catch((error) => console.error("Error al agregar:", error));
@@ -78,8 +78,6 @@ function Proveedores() {
       .catch((error) => console.error("Error al eliminar:", error));
   };
 
-
-
   return (
     <div style={styles.pageContainer}>
       <header style={styles.header}>
@@ -108,6 +106,13 @@ function Proveedores() {
               </option>
             ))}
           </select>
+          <input
+            type="text"
+            placeholder="Días de visita (Ej: Lunes, Miércoles)"
+            value={nuevoProveedor.dias_visita.join(", ")}
+            onChange={(e) => setNuevoProveedor({ ...nuevoProveedor, dias_visita: e.target.value.split(", ") })}
+            style={styles.input}
+          />
           <button onClick={agregarProveedor} style={styles.addButton}>Agregar</button>
         </div>
 
@@ -136,6 +141,12 @@ function Proveedores() {
                         </option>
                       ))}
                     </select>
+                    <input
+                      type="text"
+                      value={editarProveedor.dias_visita.join(", ")}
+                      onChange={(e) => setEditarProveedor({ ...editarProveedor, dias_visita: e.target.value.split(", ") })}
+                      style={styles.input}
+                    />
                     <button onClick={() => actualizarProveedor(prov.id)} style={styles.saveButton}>
                       Guardar
                     </button>
@@ -146,6 +157,7 @@ function Proveedores() {
                     <p style={styles.name}>
                       Categoría: {prov.categoria_nombre || "No especificada"}
                     </p>
+                    <p style={styles.name}>Días de visita: {prov.dias_visita.join(", ") || "No especificados"}</p>
                     <div style={styles.buttonGroup}>
                       <button onClick={() => setEditarProveedor(prov)} style={styles.editButton}>
                         Editar

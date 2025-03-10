@@ -262,7 +262,7 @@ const styles = {
     cursor: "pointer",
   },
   name: {
-    color: "black",  // <-- Cámbialo a "white" o el color que prefieras
+    color: "white",  // <-- Cámbialo a "white" o el color que prefieras
     fontWeight: "bold",
   },
   

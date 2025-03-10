@@ -55,18 +55,31 @@ function Proveedores() {
 
   const actualizarProveedor = (id) => {
     const token = localStorage.getItem("token");
+
+    console.log("Datos que se enviarán en la actualización:", editarProveedor);
+
     axios
       .put(
         `${API_URL}/api/proveedores/${id}/`,
         editarProveedor,
-        { headers: { Authorization: `Token ${token}` } }
+        { headers: { 
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json" 
+        }}
       )
       .then(() => {
         setEditarProveedor(null);
         obtenerProveedores();
       })
-      .catch((error) => console.error("Error al actualizar:", error));
-  };
+      .catch((error) => {
+        if (error.response) {
+          console.error("Error al actualizar:", error.response.data);
+        } else {
+          console.error("Error al actualizar:", error.message);
+        }
+      });
+};
+
 
   const eliminarProveedor = (id) => {
     const token = localStorage.getItem("token");
@@ -177,7 +190,6 @@ function Proveedores() {
   );
 }
 
-// 📌 Estilos con header mejorado 🎨
 const styles = {
   pageContainer: {
     display: "flex",

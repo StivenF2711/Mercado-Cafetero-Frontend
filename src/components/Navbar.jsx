@@ -25,39 +25,40 @@ function Navbar() {
 // 🎨 **Estilos**
 const styles = {
   navbar: {
-    width: "100%",
-    backgroundColor: "#5B3A29",
-    padding: "15px 20px",
+    width: "100vw",
+    backgroundColor: "#111827", // fondo oscuro (tailwind gray-900)
+    padding: "12px 20px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    borderRadius: "10px",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.4)",
   },
   title: {
-    color: "white",
-    fontSize: "20px",
+    color: "#f9fafb", // casi blanco
+    fontSize: "18px",
     fontWeight: "bold",
   },
   linksContainer: {
     display: "flex",
-    gap: "15px",
+    gap: "12px",
     alignItems: "center",
   },
   link: {
-    color: "#FFD700",
+    color: "#93c5fd", // azul claro (tailwind blue-300)
     textDecoration: "none",
-    fontWeight: "bold",
+    fontWeight: "500",
+    fontSize: "14px",
     transition: "color 0.3s",
   },
   logoutButton: {
-    backgroundColor: "#DC3545",
-    color: "white",
-    padding: "8px 12px",
-    borderRadius: "5px",
+    backgroundColor: "#ef4444", // rojo (tailwind red-500)
+    color: "#ffffff",
+    padding: "6px 10px",
     border: "none",
+    borderRadius: "4px",
     cursor: "pointer",
-    fontWeight: "bold",
+    fontSize: "14px",
+    fontWeight: "500",
     transition: "background 0.3s",
   },
 };

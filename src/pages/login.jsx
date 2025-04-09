@@ -14,7 +14,8 @@ function Login() {
     setError(null); // Limpiar error previo
 
     // Verificar si la URL del backend está definida correctamente
-    const backendUrl = "https://mercadocafetero.up.railway.app";
+    //const backendUrl = "https://mercadocafetero.up.railway.app";
+    const backendUrl = "http://127.0.0.1:8000";
     if (!backendUrl) {
       setError("Error interno: No se ha configurado la URL del backend.");
       return;
@@ -28,7 +29,7 @@ function Login() {
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         console.log("Token guardado:", response.data.token);
-
+        
         const redirectTo = location.state?.from || "/proveedores";
         console.log("Redirigiendo a:", redirectTo);
         navigate(redirectTo);

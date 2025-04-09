@@ -1,210 +1,114 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import ProveedorForm from "../components/Proveedor/ProveedorForm";
+import ProveedorList from "../components/Proveedor/ProveedorList";
+
+const API_URL = "http://127.0.0.1:8000";
 
 function Proveedores() {
   const [proveedores, setProveedores] = useState([]);
   const [categorias, setCategorias] = useState([]);
-  const [nuevoProveedor, setNuevoProveedor] = useState({ nombre: "", categoria: "", dias_visita: [] });
   const [editarProveedor, setEditarProveedor] = useState(null);
   const navigate = useNavigate();
 
-  const API_URL = "https://mercadocafetero.up.railway.app"; // 🔹 Definir la URL base
+  const getToken = () => localStorage.getItem("token");
 
   useEffect(() => {
-    obtenerProveedores();
-    obtenerCategorias();
+    const token = getToken();
+    if (!token) return navigate("/");
+    obtenerProveedores(token);
+    obtenerCategorias(token);
   }, []);
 
-  const obtenerProveedores = () => {
-    const token = localStorage.getItem("token");
-    if (!token) return navigate("/");
-
+  const obtenerProveedores = (token) => {
     axios
       .get(`${API_URL}/api/proveedores/`, {
         headers: { Authorization: `Token ${token}` },
       })
-      .then((response) => setProveedores(response.data))
+      .then((res) => setProveedores(res.data))
       .catch(() => navigate("/"));
   };
 
-  const obtenerCategorias = () => {
-    const token = localStorage.getItem("token");
+  const obtenerCategorias = (token) => {
     axios
       .get(`${API_URL}/api/categorias/`, {
         headers: { Authorization: `Token ${token}` },
       })
-      .then((response) => setCategorias(response.data))
-      .catch((error) => console.error("Error al obtener categorías:", error));
+      .then((res) => setCategorias(res.data))
+      .catch((err) => console.error("Error al obtener categorías:", err));
   };
 
-  const agregarProveedor = () => {
-    const token = localStorage.getItem("token");
+  const agregarProveedor = (proveedor) => {
+    const token = getToken();
+    if (!token) return;
 
-    const proveedorNuevo = {
-        ...nuevoProveedor,
-        telefono: nuevoProveedor.telefono && nuevoProveedor.telefono.trim() !== "" 
-            ? nuevoProveedor.telefono 
-            : "000-000-0000",
+    const proveedorAEnviar = {
+      ...proveedor,
+      categoria: parseInt(proveedor.categoria),
     };
 
-    console.log("Enviando datos:", proveedorNuevo); // 🛠️ Verificar antes de enviar
+    console.log("Proveedor a enviar:", proveedorAEnviar);
 
-    axios.post(
-        `${API_URL}/api/proveedores/`,
-        proveedorNuevo,
-        { headers: { Authorization: `Token ${token}`, "Content-Type": "application/json" } }
-    )
-    .then(() => {
-        setNuevoProveedor({ nombre: "", categoria: "", telefono: "", dias_visita: [] });
-        obtenerProveedores();
-    })
-    .catch((error) => {
-        if (error.response) {
-            console.error("Error al agregar:", error.response.data);
-        } else {
-            console.error("Error al agregar:", error);
-        }
-    });
-};
-
-
-const actualizarProveedor = (id) => {
-  const token = localStorage.getItem("token");
-
-  // 📌 Asegurar que los datos sean correctos antes de enviar
-  const proveedorActualizado = {
-      ...editarProveedor,
-      telefono: editarProveedor.telefono.trim() === "" ? "000-000-0000" : editarProveedor.telefono,  // ✅ Teléfono por defecto
-      dias_visita: Array.isArray(editarProveedor.dias_visita) 
-          ? editarProveedor.dias_visita 
-          : editarProveedor.dias_visita.replace(/[[\]']+/g, '').split(",").map(d => d.trim()), // ✅ Formato correcto
+    axios
+      .post(`${API_URL}/api/proveedores/`, proveedorAEnviar, {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then(() => obtenerProveedores(token))
+      .catch((err) => console.error("Error al agregar:", err.response?.data || err));
   };
 
-  axios.put(
-      `${API_URL}/api/proveedores/${id}/`,
-      proveedorActualizado,
-      { 
-          headers: { 
-              Authorization: `Token ${token}`,
-              "Content-Type": "application/json"
-          }
-      }
-  )
-  .then(() => {
-      setEditarProveedor(null);
-      obtenerProveedores();
-  })
-  .catch((error) => console.error("Error al actualizar:", error));
-};
+  const actualizarProveedor = (proveedor) => {
+    const token = getToken();
+    if (!token || !proveedor.id) return;
 
-
-
+    axios
+      .put(`${API_URL}/api/proveedores/${proveedor.id}/`, proveedor, {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then(() => {
+        setEditarProveedor(null);
+        obtenerProveedores(token);
+      })
+      .catch((err) => console.error("Error al actualizar:", err.response?.data || err));
+  };
 
   const eliminarProveedor = (id) => {
-    const token = localStorage.getItem("token");
+    const token = getToken();
+    if (!token) return;
+
     axios
       .delete(`${API_URL}/api/proveedores/${id}/`, {
         headers: { Authorization: `Token ${token}` },
       })
-      .then(() => obtenerProveedores())
-      .catch((error) => console.error("Error al eliminar:", error));
+      .then(() => obtenerProveedores(token))
+      .catch((err) => console.error("Error al eliminar:", err));
   };
 
   return (
     <div style={styles.pageContainer}>
       <header style={styles.header}>
-        <h1 style={styles.title}>☕ Mercado Cafetero - Proveedores</h1>
+        <h1 style={styles.title}>Proveedores</h1>
       </header>
 
       <div style={styles.container}>
-        {/* 📝 Formulario para agregar proveedores */}
-        <div style={styles.form}>
-          <input
-            type="text"
-            placeholder="Nombre del proveedor"
-            value={nuevoProveedor.nombre}
-            onChange={(e) => setNuevoProveedor({ ...nuevoProveedor, nombre: e.target.value })}
-            style={styles.input}
-          />
-          <select
-            value={nuevoProveedor.categoria}
-            onChange={(e) => setNuevoProveedor({ ...nuevoProveedor, categoria: e.target.value })}
-            style={styles.select}
-          >
-            <option value="">Seleccionar Categoría</option>
-            {categorias.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.nombre}
-              </option>
-            ))}
-          </select>
-          <input
-            type="text"
-            placeholder="Días de visita (Ej: Lunes, Miércoles)"
-            value={nuevoProveedor.dias_visita.join(", ")}
-            onChange={(e) => setNuevoProveedor({ ...nuevoProveedor, dias_visita: e.target.value.split(", ") })}
-            style={styles.input}
-          />
-          <button onClick={agregarProveedor} style={styles.addButton}>Agregar</button>
-        </div>
+        <ProveedorForm
+          categorias={categorias}
+          proveedorActual={editarProveedor}
+          onSubmit={editarProveedor ? actualizarProveedor : agregarProveedor}
+        />
 
-        {proveedores.length === 0 ? (
-          <p style={styles.emptyMessage}>No hay proveedores registrados.</p>
-        ) : (
-          <div style={styles.list}>
-            {proveedores.map((prov) => (
-              <div key={prov.id} style={styles.card}>
-                {editarProveedor && editarProveedor.id === prov.id ? (
-                  <>
-                    <input
-                      type="text"
-                      value={editarProveedor.nombre}
-                      onChange={(e) => setEditarProveedor({ ...editarProveedor, nombre: e.target.value })}
-                      style={styles.input}
-                    />
-                    <select
-                      value={editarProveedor.categoria}
-                      onChange={(e) => setEditarProveedor({ ...editarProveedor, categoria: e.target.value })}
-                      style={styles.select}
-                    >
-                      {categorias.map((cat) => (
-                        <option key={cat.id} value={cat.id}>
-                          {cat.nombre}
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      type="text"
-                      value={editarProveedor.dias_visita.join(", ")}
-                      onChange={(e) => setEditarProveedor({ ...editarProveedor, dias_visita: e.target.value.split(", ") })}
-                      style={styles.input}
-                    />
-                    <button onClick={() => actualizarProveedor(prov.id)} style={styles.saveButton}>
-                      Guardar
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <h3 style={styles.name}>{prov.nombre}</h3>
-                    <p style={styles.name}>
-                      Categoría: {prov.categoria_nombre || "No especificada"}
-                    </p>
-                    <p style={styles.name}>Días de visita: {prov.dias_visita.join(", ") || "No especificados"}</p>
-                    <div style={styles.buttonGroup}>
-                      <button onClick={() => setEditarProveedor(prov)} style={styles.editButton}>
-                        Editar
-                      </button>
-                      <button onClick={() => eliminarProveedor(prov.id)} style={styles.deleteButton}>
-                        Eliminar
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+        <ProveedorList
+          proveedores={proveedores}
+          onEdit={setEditarProveedor}
+          onDelete={eliminarProveedor}
+        />
       </div>
     </div>
   );
@@ -212,93 +116,40 @@ const actualizarProveedor = (id) => {
 
 const styles = {
   pageContainer: {
+    width: "100vw",
+    minHeight: "100vh",
+    backgroundColor: "#111827", // gris azulado oscuro
+    padding: "20px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    minHeight: "100vh",
-    backgroundColor: "#F5E1C3",
-    padding: "20px",
-    width: "100vw",
   },
   header: {
     width: "100%",
-    backgroundColor: "#D4A373",
+    backgroundColor: "#1f2937", // gris oscuro
     padding: "20px",
-    display: "flex", 
+    display: "flex",
     justifyContent: "center",
-    alignItems: "center", 
+    alignItems: "center",
     borderRadius: "10px",
     marginBottom: "20px",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)", // sombra más profunda
   },
-  
   title: {
-    color: "#5B3A29",
+    color: "#f9fafb", // blanco suave
     fontSize: "28px",
     fontWeight: "bold",
-    margin: "0",
+    margin: 0,
   },
   container: {
     width: "90%",
     maxWidth: "800px",
-    textAlign: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#1e293b", // slate oscuro (tailwind slate-800)
     padding: "20px",
     borderRadius: "10px",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.4)",
+    color: "#e5e7eb", // texto claro
   },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px",
-    marginBottom: "20px",
-  },
-  input: {
-    padding: "10px",
-    borderRadius: "5px",
-    border: "1px solid #ccc",
-    width: "80%",
-    maxWidth: "400px",
-  },
-  select: {
-    padding: "10px",
-    borderRadius: "5px",
-    border: "1px solid #ccc",
-    width: "80%",
-    maxWidth: "400px",
-  },
-  buttonGroup: {
-    display: "flex",
-    gap: "10px",
-    marginTop: "10px",
-  },
-  addButton: {
-    backgroundColor: "#28A745",
-    color: "white",
-    padding: "10px",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-  editButton: {
-    backgroundColor: "#FFA500",
-    color: "white",
-    padding: "10px",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-  deleteButton: {
-    backgroundColor: "#DC3545",
-    color: "white",
-    padding: "10px",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-  name: {
-    color: "black",
-    fontWeight: "bold",
-  },
-  
-
 };
 
 export default Proveedores;

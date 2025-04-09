@@ -117,21 +117,21 @@ const styles = {
     flexDirection: "column",
     alignItems: "center",
     minHeight: "100vh",
-    backgroundColor: "#F5E1C3",
+    backgroundColor: "#111827", // gris azulado oscuro (rgb(17, 24, 39))
     padding: "20px",
     width: "100vw",
   },
   header: {
     width: "100%",
-    backgroundColor: "#D4A373",
+    backgroundColor: "#1f2937", // gris oscuro
     padding: "20px",
     textAlign: "center",
     borderRadius: "10px",
     marginBottom: "20px",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.4)", // sombra más marcada
   },
   title: {
-    color: "#5B3A29",
+    color: "#f8f9fc", // gris muy claro (texto)
     fontSize: "28px",
     fontWeight: "bold",
     margin: "0",
@@ -140,16 +140,18 @@ const styles = {
     width: "90%",
     maxWidth: "800px",
     textAlign: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#1e293b", // slate oscuro (como el form de login)
     padding: "20px",
     borderRadius: "10px",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+    color: "#e5e7eb", // texto claro
   },
   loadingMessage: {
-    color: "#5B3A29",
+    color: "#c2c9d6", // --lt-color-gray-400 (tono más suave para texto)
     fontSize: "16px",
     fontStyle: "italic",
   },
 };
+
 
 export default Categorias;

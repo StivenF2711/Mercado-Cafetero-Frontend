@@ -105,29 +105,29 @@ const styles = {
     alignItems: "center",
     height: "100vh",
     width: "100vw",
-    backgroundColor: "#F5E1C3",
+    backgroundColor: "rgb(17, 24, 39)", // fondo oscuro
   },
   loginBox: {
-    backgroundColor: "#fff",
+    backgroundColor: "rgb(30, 41, 59)", // formulario oscuro
     padding: "30px",
     borderRadius: "10px",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0 2px 6px -1px rgba(0, 0, 0, 0.16), 0 1px 4px -1px rgba(0, 0, 0, 0.04)",
     width: "90%",
     maxWidth: "400px",
     textAlign: "center",
   },
   title: {
-    color: "#5B3A29",
+    color: "#f8f9fc", // texto claro (gris muy claro)
     fontSize: "24px",
     fontWeight: "bold",
     marginBottom: "10px",
   },
   subtitle: {
-    color: "#7D5A50",
+    color: "#dee3ed", // gris claro
     marginBottom: "20px",
   },
   errorMessage: {
-    color: "#DC3545",
+    color: "#D32F2F", // rojo error
     fontWeight: "bold",
     marginBottom: "10px",
   },
@@ -138,7 +138,7 @@ const styles = {
   },
   label: {
     display: "block",
-    color: "#5B3A29",
+    color: "#dee3ed", // gris claro
     fontWeight: "bold",
     textAlign: "left",
     marginBottom: "5px",
@@ -148,13 +148,15 @@ const styles = {
     maxWidth: "350px",
     padding: "10px",
     borderRadius: "5px",
-    border: "1px solid #ccc",
+    border: "1px solid #c2c9d6",
     outline: "none",
     transition: "border 0.3s",
+    backgroundColor: "#f8f9fc",
+    color: "#2f3237",
   },
   button: {
     width: "100%",
-    backgroundColor: "#D4A373",
+    backgroundColor: "#5e636e",
     color: "white",
     padding: "10px",
     borderRadius: "5px",
@@ -164,8 +166,12 @@ const styles = {
     transition: "background 0.3s",
   },
   buttonHover: {
-    backgroundColor: "#C08A54",
+    backgroundColor: "#2f3237",
   },
 };
+
+
+
+
 
 export default Login;

@@ -49,9 +49,6 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
         style={styles.input}
         required
       />
-      <h1>  
-        <span style={{ color: "white" }}>https://www.exito.com/</span>
-      </h1>
 
       <select
         name="categoria"

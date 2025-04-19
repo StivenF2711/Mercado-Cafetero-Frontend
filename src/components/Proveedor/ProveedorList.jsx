@@ -1,6 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 
 const ProveedorList = ({ proveedores, onEdit, onDelete }) => {
+  const [menuAbierto, setMenuAbierto] = useState(null);
+
+  const toggleMenu = (id) => {
+    setMenuAbierto(menuAbierto === id ? null : id);
+  };
+
+  const cerrarMenu = () => setMenuAbierto(null);
+
   return (
     <div style={styles.list}>
       {proveedores.length === 0 ? (
@@ -8,29 +16,62 @@ const ProveedorList = ({ proveedores, onEdit, onDelete }) => {
       ) : (
         proveedores.map((prov) => (
           <div key={prov.id} style={styles.card}>
-            <h3 style={styles.name}>{prov.nombre}</h3>
-            <p style={styles.text}>
-              <strong>Categoría:</strong> {prov.categoria_nombre || "No especificada"}
-            </p>
-            <p style={styles.text}>
-              <strong>Teléfono:</strong> {prov.telefono || "No especificado"}
-            </p>
-            <p style={styles.text}>
-              <strong>Email:</strong> {prov.email || "No especificado"}
-            </p>
-            <p style={styles.text}>
-              <strong>Días de visita:</strong>{" "}
-              {prov.dias_visita && prov.dias_visita.length > 0
-                ? prov.dias_visita.join(", ")
-                : "No especificados"}
-            </p>
-            <div style={styles.buttonGroup}>
-              <button onClick={() => onEdit(prov)} style={styles.editButton}>
-                Editar
+            <div>
+              <h3 style={styles.name}>{prov.nombre}</h3>
+              <p style={styles.text}>
+                <strong>Categoría:</strong>{" "}
+                {prov.categoria_nombre || "No especificada"}
+              </p>
+              <p style={styles.text}>
+                <strong>Teléfono:</strong> {prov.telefono || "No especificado"}
+              </p>
+              <p style={styles.text}>
+                <strong>Email:</strong> {prov.email || "No especificado"}
+              </p>
+              <p style={styles.text}>
+                <strong>Días de visita:</strong>{" "}
+                {prov.dias_visita?.length > 0
+                  ? prov.dias_visita.join(", ")
+                  : "No especificados"}
+              </p>
+            </div>
+
+            <div style={styles.menuWrapper}>
+              <button onClick={() => toggleMenu(prov.id)} style={styles.optionsButton}>
+                ⋮
               </button>
-              <button onClick={() => onDelete(prov.id)} style={styles.deleteButton}>
-                Eliminar
-              </button>
+
+              {menuAbierto === prov.id && (
+                <div style={styles.menu}>
+                  <button
+                    onClick={() => {
+                      onEdit(prov);
+                      cerrarMenu();
+                    }}
+                    style={styles.menuItem}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => {
+                      onDelete(prov.id);
+                      cerrarMenu();
+                    }}
+                    style={{ ...styles.menuItem, color: "#ef4444" }}
+                  >
+                    Eliminar
+                  </button>
+                  <button
+                    onClick={() => {
+                      alert(`Contactar con ${prov.nombre}`);
+                      cerrarMenu();
+                    }}
+                    style={styles.menuItem}
+                  >
+                    Contactar
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))
@@ -45,7 +86,7 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     gap: "10px",
-    alignItems: "center", // centrado
+    alignItems: "center",
   },
   emptyMessage: {
     textAlign: "center",
@@ -53,7 +94,7 @@ const styles = {
     fontSize: "14px",
   },
   card: {
-    backgroundColor: "#1e293b", // dark slate
+    backgroundColor: "#1e293b",
     padding: "10px",
     borderRadius: "8px",
     width: "90%",
@@ -61,6 +102,7 @@ const styles = {
     boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)",
     color: "#e5e7eb",
     fontSize: "14px",
+    position: "relative",
   },
   name: {
     color: "#f9fafb",
@@ -70,31 +112,41 @@ const styles = {
   },
   text: {
     margin: "2px 0",
-    color: "#cbd5e1", // gris claro
+    color: "#cbd5e1",
   },
-  buttonGroup: {
+  menuWrapper: {
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+  },
+  optionsButton: {
+    background: "none",
+    border: "none",
+    fontSize: "20px",
+    color: "#e2e8f0",
+    cursor: "pointer",
+  },
+  menu: {
+    position: "absolute",
+    top: "30px",
+    right: "0px",
+    backgroundColor: "#334155",
+    borderRadius: "6px",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
+    zIndex: 10,
     display: "flex",
-    justifyContent: "center",
-    gap: "8px",
-    marginTop: "10px",
+    flexDirection: "column",
+    overflow: "hidden",
   },
-  editButton: {
-    backgroundColor: "#3b82f6", // azul minimalista
-    color: "#fff",
-    padding: "6px 12px",
-    borderRadius: "4px",
-    fontSize: "13px",
-    cursor: "pointer",
+  menuItem: {
+    padding: "10px 16px",
+    backgroundColor: "transparent",
     border: "none",
-  },
-  deleteButton: {
-    backgroundColor: "#ef4444", // rojo minimalista
-    color: "#fff",
-    padding: "6px 12px",
-    borderRadius: "4px",
-    fontSize: "13px",
+    color: "#f1f5f9",
+    textAlign: "left",
+    fontSize: "14px",
     cursor: "pointer",
-    border: "none",
+    whiteSpace: "nowrap",
   },
 };
 

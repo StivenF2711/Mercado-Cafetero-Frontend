@@ -14,6 +14,7 @@ function Navbar() {
       <div style={styles.linksContainer}>
         <Link to="/proveedores" style={styles.link}>Proveedores</Link>
         <Link to="/categorias" style={styles.link}>Categorias</Link>
+        <Link to="/inventario" style={styles.link}>Inventario</Link>
         <button onClick={handleLogout} style={styles.logoutButton}>
           Cerrar Sesión
         </button>

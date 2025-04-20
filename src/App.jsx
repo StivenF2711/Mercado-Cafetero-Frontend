@@ -5,6 +5,8 @@ import Proveedores from "./pages/Proveedores.jsx";
 import PrivateRoute from "./components/PrivateRoute";
 import Categorias from "./pages/Categorias.jsx";
 import Inventario from "./pages/Inventario.jsx"; // Importa tu componente de inventario
+import Producto from "./pages/Producto.jsx"; // Importa tu componente de producto
+
 
 function App() {
   return (
@@ -43,6 +45,15 @@ function App() {
             }
           />
         </Route>
+        <Route
+          path="/producto"
+            element={
+              <>
+                <Navbar />
+                <Producto />
+            </>
+          }
+        />
 
         {/* Redirección por defecto */}
         <Route path="*" element={<Navigate to="/login" />} />

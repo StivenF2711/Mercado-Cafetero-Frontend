@@ -49,7 +49,7 @@ function Proveedores() {
       categoria: parseInt(proveedor.categoria),
     };
 
-    console.log("Proveedor a enviar:", proveedorAEnviar);
+    console.log("Proveedor:", proveedorAEnviar);
 
     axios
       .post(`${API_URL}/api/proveedores/`, proveedorAEnviar, {
@@ -93,18 +93,14 @@ function Proveedores() {
   };
 
   return (
-    <div style={styles.pageContainer}>
-      <header style={styles.header}>
-        <h1 style={styles.title}>Proveedores</h1>
-      </header>
-
-      <div style={styles.container}>
+    <div style={styles.container}>
+        <h1 style={styles.title}>Gestión de Proveedores</h1>
+      <div style={styles.card}>
         <ProveedorForm
           categorias={categorias}
           proveedorActual={editarProveedor}
           onSubmit={editarProveedor ? actualizarProveedor : agregarProveedor}
         />
-
         <ProveedorList
           proveedores={proveedores}
           onEdit={setEditarProveedor}
@@ -114,43 +110,56 @@ function Proveedores() {
     </div>
   );
 }
-
-const styles = {
-  pageContainer: {
-    width: "100vw",
-    minHeight: "100vh",
-    backgroundColor: "#111827", // gris azulado oscuro
-    padding: "20px",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  header: {
-    width: "100%",
-    backgroundColor: "#1f2937", // gris oscuro
-    padding: "20px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: "10px",
-    marginBottom: "20px",
-    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)", // sombra más profunda
-  },
-  title: {
-    color: "#f9fafb", // blanco suave
-    fontSize: "28px",
-    fontWeight: "bold",
-    margin: 0,
-  },
-  container: {
-    width: "90%",
-    maxWidth: "800px",
-    backgroundColor: "#1e293b", // slate oscuro (tailwind slate-800)
-    padding: "20px",
-    borderRadius: "10px",
-    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.4)",
-    color: "#e5e7eb", // texto claro
-  },
-};
-
+  
+  const styles = {
+    pageContainer: {
+      padding: "20px",
+      minHeight: "100vh",
+      backgroundColor: "#111827", // fondo principal
+      color: "#f8f9fc", // texto muy claro
+    },
+    header: {
+      width: "100%",
+      backgroundColor: "#1f2937", // gris oscuro
+      padding: "20px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      borderRadius: "12px", // más redondeado para dar el mismo estilo
+      marginBottom: "24px", // margen más grande
+      boxShadow: "0 6px 14px rgba(0, 0, 0, 0.5)", // igual al del inventario
+    },
+    container: {
+      padding: "20px",
+      minHeight: "100vh",
+      backgroundColor: "#111827", // fondo principal
+      color: "#f8f9fc", // texto muy claro
+    },
+    title: {
+      fontSize: "24px",
+      fontWeight: "bold",
+      marginBottom: "16px",
+      backgroundColor: "#1f2937", // fondo del título
+      padding: "12px 20px",
+      borderRadius: "8px",
+      boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+      textAlign: "center",
+    },
+    card: {
+      width: "90%",
+      maxWidth: "850px",
+      margin: "0 auto",
+      backgroundColor: "#1e293b", // slate oscuro
+      padding: "20px",
+      borderRadius: "12px",
+      boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+    },
+    loading: {
+      color: "#c2c9d6", // gris claro
+      fontSize: "16px",
+      fontStyle: "italic",
+      marginTop: "16px",
+    },
+  };
+  
 export default Proveedores;

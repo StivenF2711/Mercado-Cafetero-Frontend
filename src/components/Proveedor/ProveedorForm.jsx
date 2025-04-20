@@ -6,14 +6,16 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
     categoria: "",
     telefono: "",
     email: "",
-    dias_visita: [], // ✅ Corregido aquí
+    dias_visita: "", // Siempre string
   });
 
   useEffect(() => {
     if (proveedorActual) {
       setProveedor({
         ...proveedorActual,
-        dias_visita: proveedorActual.dias_visita || [], // ✅ Previene errores si es undefined
+        dias_visita: typeof proveedorActual.dias_visita === "string"
+          ? proveedorActual.dias_visita
+          : "",
       });
     }
   }, [proveedorActual]);
@@ -25,18 +27,14 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Proveedor a enviar:", proveedor); // 👀 Verifica aquí
+    console.log("Proveedor a enviar:", proveedor);
     onSubmit(proveedor);
-    setProveedor({
-      nombre: "",
-      categoria: "",
-      telefono: "",
-      email: "",
-      dias_visita: [],
-    });
   };
-  
-  
+
+  const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+  const diasArray = proveedor.dias_visita
+    ? proveedor.dias_visita.split(",").map(d => d.trim()).filter(Boolean)
+    : [];
 
   return (
     <form onSubmit={handleSubmit} style={styles.form}>
@@ -44,7 +42,7 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
         type="text"
         name="nombre"
         placeholder="Nombre del proveedor"
-        value={proveedor.nombre || ""}
+        value={proveedor.nombre}
         onChange={handleChange}
         style={styles.input}
         required
@@ -69,14 +67,15 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
         type="text"
         name="telefono"
         placeholder="Teléfono del proveedor"
-        value={proveedor.telefono || ""}
+        value={proveedor.telefono}
         onChange={handleChange}
         style={styles.input}
       />
 
       <div style={styles.checkboxContainer}>
-        {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"].map((dia) => {
-          const isChecked = proveedor.dias_visita.includes(dia);
+        {diasSemana.map((dia) => {
+          const isChecked = diasArray.includes(dia);
+
           return (
             <label
               key={dia}
@@ -92,10 +91,16 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
                 checked={isChecked}
                 onChange={(e) => {
                   const checked = e.target.checked;
-                  const updatedDias = checked
-                    ? [...proveedor.dias_visita, dia]
-                    : proveedor.dias_visita.filter((d) => d !== dia);
-                  setProveedor({ ...proveedor, dias_visita: updatedDias });
+                  let updatedDias = [...diasArray];
+
+                  if (checked && !updatedDias.includes(dia)) {
+                    updatedDias.push(dia);
+                  } else if (!checked) {
+                    updatedDias = updatedDias.filter((d) => d !== dia);
+                  }
+
+                  const nuevoValor = updatedDias.join(",");
+                  setProveedor({ ...proveedor, dias_visita: nuevoValor });
                 }}
                 style={{ marginRight: "5px" }}
               />
@@ -109,7 +114,7 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
         type="email"
         name="email"
         placeholder="Correo electrónico del proveedor"
-        value={proveedor.email || ""}
+        value={proveedor.email}
         onChange={handleChange}
         style={styles.input}
       />
@@ -126,9 +131,9 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     gap: "8px",
-    margin: "0 auto 16px", // centrado
+    margin: "0 auto 16px",
     padding: "12px",
-    maxWidth: "400px", // ancho reducido
+    maxWidth: "400px",
     backgroundColor: "#1f2937",
     borderRadius: "8px",
     boxShadow: "0 2px 6px rgba(0, 0, 0, 0.4)",
@@ -181,6 +186,5 @@ const styles = {
     transition: "background-color 0.3s",
   },
 };
-
 
 export default ProveedorForm;

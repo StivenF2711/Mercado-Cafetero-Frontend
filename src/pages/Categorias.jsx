@@ -5,8 +5,7 @@ import CategoriaForm from "../components/Categoria/CategoriaForm";
 import CategoriaList from "../components/Categoria/CategoriaList";
 
 const API_URL = "https://mercado-cafetero-backend-production.up.railway.app";
-//const API_URL = "http://127.0.0.1:8000";
-
+// const API_URL = "http://127.0.0.1:8000";
 
 function Categorias() {
   const [categorias, setCategorias] = useState([]);
@@ -83,12 +82,10 @@ function Categorias() {
   };
 
   return (
-    <div style={styles.pageContainer}>
-      <header style={styles.header}>
-        <h1 style={styles.title}>Mercado Cafetero - Categorías</h1>
-      </header>
+    <div style={styles.container}>
+      <h2 style={styles.title}>Gestión de Categorías</h2>
 
-      <div style={styles.container}>
+      <div style={styles.card}>
         <CategoriaForm
           nuevaCategoria={nuevaCategoria}
           setNuevaCategoria={setNuevaCategoria}
@@ -96,7 +93,7 @@ function Categorias() {
         />
 
         {loading ? (
-          <p style={styles.loadingMessage}>Cargando categorías...</p>
+          <p style={styles.loading}>Cargando categorías...</p>
         ) : (
           <CategoriaList
             categorias={categorias}
@@ -112,46 +109,37 @@ function Categorias() {
 }
 
 const styles = {
-  pageContainer: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+  container: {
+    padding: "20px",
     minHeight: "100vh",
-    backgroundColor: "#111827", // gris azulado oscuro (rgb(17, 24, 39))
-    padding: "20px",
-    width: "100vw",
-  },
-  header: {
-    width: "100%",
-    backgroundColor: "#1f2937", // gris oscuro
-    padding: "20px",
-    textAlign: "center",
-    borderRadius: "10px",
-    marginBottom: "20px",
-    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.4)", // sombra más marcada
+    backgroundColor: "#111827", // fondo principal
+    color: "#f8f9fc", // texto muy claro
   },
   title: {
-    color: "#f8f9fc", // gris muy claro (texto)
-    fontSize: "28px",
+    fontSize: "24px",
     fontWeight: "bold",
-    margin: "0",
+    marginBottom: "16px",
+    backgroundColor: "#1f2937", // fondo del título
+    padding: "12px 20px",
+    borderRadius: "8px",
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+    textAlign: "center",
   },
-  container: {
+  card: {
     width: "90%",
     maxWidth: "800px",
-    textAlign: "center",
-    backgroundColor: "#1e293b", // slate oscuro (como el form de login)
+    margin: "0 auto",
+    backgroundColor: "#1e293b", // slate oscuro
     padding: "20px",
     borderRadius: "10px",
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
-    color: "#e5e7eb", // texto claro
   },
-  loadingMessage: {
-    color: "#c2c9d6", // --lt-color-gray-400 (tono más suave para texto)
+  loading: {
+    color: "#c2c9d6", // gris claro
     fontSize: "16px",
     fontStyle: "italic",
+    marginTop: "16px",
   },
 };
-
 
 export default Categorias;

@@ -20,6 +20,7 @@ function Proveedores() {
     if (!token) return navigate("/");
     obtenerProveedores(token);
     obtenerCategorias(token);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const obtenerProveedores = (token) => {

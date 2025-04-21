@@ -63,6 +63,7 @@ const ProductoList = ({ onEdit, productos: productosProp }) => {
                         <th>Precio Compra</th>
                         <th>Precio Venta</th>
                         <th>Unidad de Medida</th>
+                        <th>Stock</th> {/* Nueva columna para el stock */}
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -75,6 +76,7 @@ const ProductoList = ({ onEdit, productos: productosProp }) => {
                             <td style={styles.td}>${producto.precio_compra}</td>
                             <td style={styles.td}>${producto.precio_venta}</td>
                             <td style={styles.td}>{producto.unidad_medida || "N/A"}</td>
+                            <td style={styles.td}>{producto.stock}</td> {/* Mostrar el stock */}
                             <td style={styles.td}>
                                 <button style={styles.editBtn} onClick={() => onEdit(producto)}>✏️</button>
                                 <button style={styles.deleteBtn} onClick={() => eliminarProducto(producto.id)}>🗑️</button>

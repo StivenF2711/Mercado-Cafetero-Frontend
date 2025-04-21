@@ -16,6 +16,7 @@ const Producto = () => {
             return;
         }
         obtenerProductos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
     const obtenerProductos = () => {

@@ -13,6 +13,7 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
         precio_venta: "",
         imagen: null, // Para almacenar el archivo de la imagen
         unidad_medida: "",
+        stock: 1, // Nuevo campo para el stock inicial
     });
 
     const [categorias, setCategorias] = useState([]);
@@ -26,7 +27,10 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
 
         axios.get(`${API_URL}/api/categorias/`, {
             headers: { Authorization: `Token ${token}` },
-        }).then(res => setCategorias(res.data));
+        }).then(res => {
+            setCategorias(res.data);
+            console.log("Categorías recibidas del backend:", res.data); // Log de las categorías completas
+        });
 
         axios.get(`${API_URL}/api/proveedores/`, {
             headers: { Authorization: `Token ${token}` },
@@ -35,7 +39,7 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
 
     useEffect(() => {
         if (productoSeleccionado) {
-            setFormulario({ ...productoSeleccionado, imagen: null }); // No precargar la imagen para evitar problemas
+            setFormulario({ ...productoSeleccionado, imagen: null });
         } else {
             setFormulario({
                 id: null,
@@ -46,16 +50,18 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
                 precio_venta: "",
                 imagen: null,
                 unidad_medida: "",
+                stock: "",
             });
         }
     }, [productoSeleccionado]);
-
+    
     const handleChange = (e) => {
         const { name, value, type, files } = e.target;
         setFormulario((prev) => ({
             ...prev,
             [name]: type === 'file' ? files[0] : value,
         }));
+        console.log("Valor de formulario.categoria después de cambio:", formulario.categoria);
     };
 
     const handleSubmit = (e) => {
@@ -72,15 +78,20 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
         const formData = new FormData();
         formData.append('nombre', formulario.nombre);
         formData.append('categoria', formulario.categoria);
-        formData.append('proveedor', formulario.proveedor || ''); // Permite proveedor vacío si no es requerido
+        formData.append('proveedor', formulario.proveedor || '');
         formData.append('precio_compra', formulario.precio_compra);
         formData.append('precio_venta', formulario.precio_venta);
         formData.append('unidad_medida', formulario.unidad_medida);
+        formData.append('stock', formulario.stock); // Agrega el stock al FormData
         if (formulario.imagen) {
             formData.append('imagen', formulario.imagen);
         }
         if (formulario.id) {
-            formData.append('id', formulario.id); // Incluye el ID para la actualización
+            formData.append('id', formulario.id);
+        }
+        console.log("Datos del FormData antes de enviar:");
+        for (const [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
         }
 
         const method = productoSeleccionado ? "put" : "post";
@@ -93,7 +104,7 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
             url: url,
             data: formData,
             headers: {
-                'Content-Type': 'multipart/form-data', // Importante para enviar archivos
+                'Content-Type': 'multipart/form-data',
                 Authorization: `Token ${token}`,
             },
         })
@@ -112,6 +123,7 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
                     precio_venta: "",
                     imagen: null,
                     unidad_medida: "",
+                    stock: 0,
                 });
             })
             .catch((err) => {
@@ -153,11 +165,14 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
                 required
             >
                 <option value="">Seleccione una categoría</option>
-                {categorias.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                        {cat.nombre}
-                    </option>
-                ))}
+                {categorias.map((cat) => {
+                    console.log("ID de categoría del backend:", cat.id); // Log agregado
+                    return (
+                        <option key={cat.id} value={cat.id}>
+                            {cat.nombre}
+                        </option>
+                    );
+                })}
             </select>
 
             <select
@@ -205,9 +220,19 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
             />
 
             <input
+                type="number"
+                name="stock"
+                placeholder="Stock Inicial"
+                value={formulario.stock}
+                onChange={handleChange}
+                style={styles.input}
+                required
+            />
+
+            <input
                 type="file"
                 name="imagen"
-                accept="image/*" // Acepta solo archivos de imagen
+                accept="image/*"
                 onChange={handleChange}
                 style={styles.input}
             />

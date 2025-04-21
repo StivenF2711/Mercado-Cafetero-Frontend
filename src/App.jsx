@@ -7,6 +7,7 @@ import Categorias from "./pages/Categorias.jsx";
 import Inventario from "./pages/Inventario.jsx"; // Importa tu componente de inventario
 import Producto from "./pages/Producto.jsx"; // Importa tu componente de producto
 import Transacciones from "./pages/Transacciones.jsx"; // Importa tu componente de entradas y salidas
+import ContartarProv from "./pages/ContactarProv.jsx"; // Importa tu componente de contactar proveedor
 
 function App() {
   return (
@@ -50,6 +51,15 @@ function App() {
               <>
                 <Navbar />
                 <Transacciones />
+              </>
+            }
+          />
+          <Route
+            path="/contactar/:id"
+            element={
+              <>
+                <Navbar />
+                <ContartarProv />
               </>
             }
           />

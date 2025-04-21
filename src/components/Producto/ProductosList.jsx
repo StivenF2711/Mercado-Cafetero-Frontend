@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from 'sweetalert2'; // Importa SweetAlert2
 
-const API_URL = "https://mercado-cafetero-backend-production.up.railway.app/api/inventario/"
+const API_URL = "https://mercado-cafetero-backend-production.up.railway.app/api/inventario"
 
 const ProductoList = ({ onEdit, productos: productosProp }) => {
     const [productos, setProductos] = useState(productosProp);

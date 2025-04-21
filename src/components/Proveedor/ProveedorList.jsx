@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from 'react-router-dom';
 
 const ProveedorList = ({ proveedores, onEdit, onDelete }) => {
   const [menuAbierto, setMenuAbierto] = useState(null);
@@ -8,6 +9,77 @@ const ProveedorList = ({ proveedores, onEdit, onDelete }) => {
   };
 
   const cerrarMenu = () => setMenuAbierto(null);
+
+  const styles = {
+    list: {
+      marginTop: "20px",
+      display: "flex",
+      flexDirection: "column",
+      gap: "10px",
+      alignItems: "center",
+    },
+    emptyMessage: {
+      textAlign: "center",
+      color: "#888",
+      fontSize: "14px",
+    },
+    card: {
+      backgroundColor: "#1e293b",
+      padding: "10px",
+      borderRadius: "8px",
+      width: "90%",
+      maxWidth: "400px",
+      boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)",
+      color: "#e5e7eb",
+      fontSize: "14px",
+      position: "relative",
+    },
+    name: {
+      color: "#f9fafb",
+      fontWeight: "600",
+      fontSize: "16px",
+      margin: "5px 0",
+    },
+    text: {
+      margin: "2px 0",
+      color: "#cbd5e1",
+    },
+    menuWrapper: {
+      position: "absolute",
+      top: "10px",
+      right: "10px",
+    },
+    optionsButton: {
+      background: "none",
+      border: "none",
+      fontSize: "20px",
+      color: "#e2e8f0",
+      cursor: "pointer",
+    },
+    menu: {
+      position: "absolute",
+      top: "30px",
+      right: "0px",
+      backgroundColor: "#334155",
+      borderRadius: "6px",
+      boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
+      zIndex: 10,
+      display: "flex",
+      flexDirection: "column",
+      overflow: "hidden",
+    },
+    menuItem: {
+      padding: "10px 16px",
+      backgroundColor: "transparent",
+      border: "none",
+      color: "#f1f5f9",
+      textAlign: "left",
+      fontSize: "14px",
+      cursor: "pointer",
+      whiteSpace: "nowrap",
+      textDecoration: 'none',
+    },
+  };
 
   return (
     <div style={styles.list}>
@@ -61,15 +133,13 @@ const ProveedorList = ({ proveedores, onEdit, onDelete }) => {
                   >
                     Eliminar
                   </button>
-                  <button
-                    onClick={() => {
-                      alert(`Contactar con ${prov.nombre}`);
-                      cerrarMenu();
-                    }}
+                  <Link
+                    to={`/proveedores/contactar/${prov.id}`}
                     style={styles.menuItem}
+                    onClick={cerrarMenu}
                   >
                     Contactar
-                  </button>
+                  </Link>
                 </div>
               )}
             </div>
@@ -78,76 +148,6 @@ const ProveedorList = ({ proveedores, onEdit, onDelete }) => {
       )}
     </div>
   );
-};
-
-const styles = {
-  list: {
-    marginTop: "20px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px",
-    alignItems: "center",
-  },
-  emptyMessage: {
-    textAlign: "center",
-    color: "#888",
-    fontSize: "14px",
-  },
-  card: {
-    backgroundColor: "#1e293b",
-    padding: "10px",
-    borderRadius: "8px",
-    width: "90%",
-    maxWidth: "400px",
-    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)",
-    color: "#e5e7eb",
-    fontSize: "14px",
-    position: "relative",
-  },
-  name: {
-    color: "#f9fafb",
-    fontWeight: "600",
-    fontSize: "16px",
-    margin: "5px 0",
-  },
-  text: {
-    margin: "2px 0",
-    color: "#cbd5e1",
-  },
-  menuWrapper: {
-    position: "absolute",
-    top: "10px",
-    right: "10px",
-  },
-  optionsButton: {
-    background: "none",
-    border: "none",
-    fontSize: "20px",
-    color: "#e2e8f0",
-    cursor: "pointer",
-  },
-  menu: {
-    position: "absolute",
-    top: "30px",
-    right: "0px",
-    backgroundColor: "#334155",
-    borderRadius: "6px",
-    boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
-    zIndex: 10,
-    display: "flex",
-    flexDirection: "column",
-    overflow: "hidden",
-  },
-  menuItem: {
-    padding: "10px 16px",
-    backgroundColor: "transparent",
-    border: "none",
-    color: "#f1f5f9",
-    textAlign: "left",
-    fontSize: "14px",
-    cursor: "pointer",
-    whiteSpace: "nowrap",
-  },
 };
 
 export default ProveedorList;

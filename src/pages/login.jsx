@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
@@ -11,11 +11,9 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(null); // Limpiar error previo
+    setError(null);
 
-    // Verificar si la URL del backend está definida correctamente
-    const backendUrl = "https://mercado-cafetero-backend-production.up.railway.app";
-    //const backendUrl = "http://127.0.0.1:8000";
+    const backendUrl ="https://mercado-cafetero-backend-production.up.railway.app"; // Asegúrate de que esta sea la URL correcta de tu backend
     if (!backendUrl) {
       setError("Error interno: No se ha configurado la URL del backend.");
       return;
@@ -23,22 +21,23 @@ function Login() {
 
     try {
       console.log("Enviando solicitud a:", `${backendUrl}/api/login/`);
-      
+
       const response = await axios.post(`${backendUrl}/api/login/`, { username, password });
 
-      if (response.data.token) {
+      if (response.data.token && response.data.role) {
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("userRole", response.data.role);
         console.log("Token guardado:", response.data.token);
-        
+        console.log("Rol guardado:", response.data.role);
+
         const redirectTo = location.state?.from || "/proveedores";
         console.log("Redirigiendo a:", redirectTo);
         navigate(redirectTo);
       } else {
-        setError("Respuesta inválida del servidor.");
+        setError("Respuesta inválida del servidor: Falta token o rol.");
       }
     } catch (error) {
       if (error.response) {
-        // Si el backend responde con un código de error
         if (error.response.status === 401) {
           setError("Usuario o contraseña incorrectos.");
         } else if (error.response.status === 405) {
@@ -47,7 +46,6 @@ function Login() {
           setError(`Error en el servidor (${error.response.status}).`);
         }
       } else if (error.request) {
-        // Si no hay respuesta del servidor
         setError("No se pudo conectar con el servidor.");
       } else {
         setError("Ocurrió un error inesperado.");
@@ -169,9 +167,5 @@ const styles = {
     backgroundColor: "#2f3237",
   },
 };
-
-
-
-
 
 export default Login;

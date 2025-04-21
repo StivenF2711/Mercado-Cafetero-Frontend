@@ -16,6 +16,7 @@ function Navbar() {
         <Link to="/categorias" style={styles.link}>Categorias</Link>
         <Link to="/inventario" style={styles.link}>Inventario</Link>
         <Link to="/producto" style={styles.link}>Productos</Link>
+        <Link to="/transacciones" style={styles.link}>Entradas y Salidas</Link>
         <button onClick={handleLogout} style={styles.logoutButton}>
           Cerrar Sesión
         </button>

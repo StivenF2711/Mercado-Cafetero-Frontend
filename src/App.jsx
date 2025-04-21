@@ -6,7 +6,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Categorias from "./pages/Categorias.jsx";
 import Inventario from "./pages/Inventario.jsx"; // Importa tu componente de inventario
 import Producto from "./pages/Producto.jsx"; // Importa tu componente de producto
-
+import Transacciones from "./pages/Transacciones.jsx"; // Importa tu componente de entradas y salidas
 
 function App() {
   return (
@@ -44,7 +44,17 @@ function App() {
               </>
             }
           />
+          <Route
+            path="/transacciones"
+            element={
+              <>
+                <Navbar />
+                <Transacciones />
+              </>
+            }
+          />
         </Route>
+        
         <Route
           path="/producto"
             element={

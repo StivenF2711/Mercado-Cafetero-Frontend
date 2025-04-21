@@ -66,7 +66,7 @@ function App() {
           />
         </Route>
         <Route
-            path="/pedido"
+            path="/Pedido"
             element={
               <>
                 <Navbar />

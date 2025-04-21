@@ -59,12 +59,28 @@ const GestionStockView = () => {
         setMessage('');
         setError('');
         try {
+            // Registrar el movimiento (entrada o salida)
             await axios.post(`${API_URL}`, {
                 producto: id,
                 tipo: tipo,
                 cantidad: parseInt(cantidad, 10),
                 observaciones: observaciones,
             });
+
+            // Actualizar la lista de productos
+            fetchProductos();
+
+            // Si es una salida, verifica el stock del producto
+            if (tipo === 'salida') {
+                const producto = productos.find((p) => p.id === id);
+                const nuevoStock = producto.stock - parseInt(cantidad, 10);
+
+                // Si el stock es menor a 5, mostrar alerta
+                if (nuevoStock < 5) {
+                    setMessage(`Alerta: El stock del producto "${producto.nombre}" es menor a 5 unidades.`);
+                }
+            }
+
             setMessage(`Movimiento de ${tipo} registrado exitosamente para el producto con ID ${id}.`);
             setCreandoEntradaId(null);
             setCreandoSalidaId(null);
@@ -72,7 +88,7 @@ const GestionStockView = () => {
             setSalidaCantidad('');
             setEntradaObservaciones('');
             setSalidaObservaciones('');
-            fetchProductos(); // Recargar la lista de productos para mostrar el stock actualizado
+
         } catch (error) {
             setError(`Error al registrar el movimiento de ${tipo} para el producto con ID ${id}.`);
             console.error('Error creating movimiento:', error);

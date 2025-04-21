@@ -1,157 +1,139 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-
-const API_URL = 'http://127.0.0.1:8000'; // Asegúrate de que esta sea tu URL base
-
-const InventarioList = () => {
-    const [productos, setProductos] = useState([]);
-    const [cargando, setCargando] = useState(true);
-    const [error, setError] = useState(null);
-    const getToken = () => localStorage.getItem('token');
-
-    useEffect(() => {
-        const token = getToken();
-        if (!token) {
-            setError('No se encontró el token de autenticación.');
-            setCargando(false);
-            return;
-        }
-
-        axios.get(`${API_URL}/api/productos/`, {
-            headers: { Authorization: `Token ${token}` },
-        })
-            .then(response => {
-                setProductos(response.data);
-                setCargando(false);
-            })
-            .catch(error => {
-                console.error('Error al cargar el inventario:', error);
-                setError('Error al cargar el inventario.');
-                setCargando(false);
-            });
-    }, []);
-
-    if (cargando) {
-        return <div>Cargando inventario...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    return (
-        <div style={styles.container}>
-            <h2 style={styles.title}>Inventario de Productos</h2>
-            <div style={styles.productList}>
-                {productos.map(producto => (
-                    <div key={producto.id} style={styles.productCard}>
-                        {producto.imagen ? (
-                            <img
-                                src={`${API_URL}${producto.imagen}`}
-                                alt={producto.nombre}
-                                style={styles.productImage}
-                            />
-                        ) : (
-                            <div style={styles.noImage}>Sin imagen</div>
-                        )}
-                        <h3 style={styles.productName}>{producto.nombre}</h3>
-                        <p style={styles.productCategory}>Categoría: {producto.categoria_nombre}</p>
-                        <p style={styles.productStock}>Stock: {producto.stock} {producto.unidad_medida}</p>
-                        <p style={styles.productPrice}>Precio: ${producto.precio_venta}</p>
-                        <button style={styles.addToCartButton}>Agregar <span role="img" aria-label="carrito">🛒</span></button>
-                    </div>
-                ))}
-            </div>
-            {productos.length === 0 && !cargando && <div>No hay productos en el inventario.</div>}
-        </div>
-    );
-};
+import React, { useEffect, useState } from 'react';
 
 const styles = {
-    container: {
-        padding: '20px',
-        backgroundColor: '#0f172a', // Azul oscuro de fondo
-        borderRadius: '8px',
-    },
-    title: {
-        fontSize: '24px',
-        marginBottom: '20px',
-        textAlign: 'center',
-        color: '#f8f9fc', // Texto claro
-    },
-    productList: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '20px',
-        justifyContent: 'flex-start',
-    },
-    productCard: {
-        backgroundColor: '#1e293b', // Azul más claro para las tarjetas
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
-        width: 'calc(20% - 20px)', // Ajusta el ancho según la cantidad de tarjetas por fila que desees
-        minWidth: '200px',
-        padding: '15px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        textAlign: 'center',
-        color: '#f8f9fc', // Texto claro en las tarjetas
-    },
-    productImage: {
-        width: '100%',
-        height: 'auto',
-        borderRadius: '4px',
-        marginBottom: '10px',
-        objectFit: 'cover',
-        maxHeight: '150px',
-    },
-    noImage: {
-        width: '100%',
-        height: '150px',
-        backgroundColor: '#334155', // Un tono de azul más oscuro para el "Sin imagen"
-        borderRadius: '4px',
-        marginBottom: '10px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        color: '#f8f9fc',
-    },
-    productName: {
-        fontSize: '18px',
-        fontWeight: 'bold',
-        marginBottom: '5px',
-        color: '#f8f9fc',
-    },
-    productCategory: {
-        fontSize: '14px',
-        color: '#a7b0be', // Un tono de gris azulado para la categoría
-        marginBottom: '5px',
-    },
-    productStock: {
-        fontSize: '16px',
-        color: '#cbd5e1', // Otro tono de gris azulado para el stock
-        marginBottom: '10px',
-    },
-    productPrice: {
-        fontSize: '16px',
-        fontWeight: 'bold',
-        color: '#818cf8', // Un azul más brillante para el precio
-        marginBottom: '10px',
-    },
-    addToCartButton: {
-        backgroundColor: '#3b82f6', // Un azul más llamativo para el botón
-        color: 'white',
-        border: 'none',
-        borderRadius: '4px',
-        padding: '10px 15px',
-        cursor: 'pointer',
-        fontSize: '16px',
-        transition: 'background-color 0.3s ease',
-        '&:hover': {
-            backgroundColor: '#2563eb',
-        },
-    },
+  container: {
+    padding: '1.5rem',
+    backgroundColor: 'var(--lt-color-background-default)',
+    borderRadius: '1rem',
+    boxShadow: 'var(--lt-shadow-medium)',
+    color: 'var(--lt-color-text-default)',
+  },
+  loading: {
+    fontSize: '18px',
+    color: '#007BFF',
+    fontWeight: 'bold',
+  },
+  noData: {
+    fontSize: '18px',
+    color: '#888',
+    textAlign: 'center',
+    marginTop: '20px',
+  },
+  item: {
+    backgroundColor: 'var(--lt-color-background-light)',
+    padding: '0.75rem 1rem',
+    border: '1px solid var(--lt-color-gray-300)',
+    borderRadius: '0.5rem',
+    marginBottom: '1rem',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  itemText: {
+    fontSize: '16px',
+    color: 'var(--lt-color-text-default)',
+  },
+  actions: {
+    display: 'flex',
+    gap: '0.5rem',
+  },
+  filtroSelect: {
+    padding: '0.5rem 1rem',
+    border: '1px solid var(--lt-color-gray-300)',
+    borderRadius: '0.5rem',
+    backgroundColor: 'var(--lt-color-background-light)',
+    color: 'var(--lt-color-text-default)',
+  },
+  filtroInput: {
+    padding: '0.5rem 1rem',
+    border: '1px solid var(--lt-color-gray-300)',
+    borderRadius: '0.5rem',
+    backgroundColor: 'var(--lt-color-background-light)',
+    color: 'var(--lt-color-text-default)',
+  },
+  tablaInventario: {
+    width: '100%',
+    borderCollapse: 'collapse',
+    backgroundColor: 'var(--lt-color-background-light)',
+  },
+  tablaThTd: {
+    padding: '0.75rem 1rem',
+    border: '1px solid var(--lt-color-gray-300)',
+    textAlign: 'left',
+  },
+  tablaTh: {
+    backgroundColor: 'var(--lt-color-gray-200)',
+    color: 'var(--lt-color-text-secondary)',
+  },
+  tablaTd: {
+    color: 'var(--lt-color-text-default)',
+  },
+};
+
+const InventarioList = () => {
+  const [movimientos, setMovimientos] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/inventario'); // URL de tu API
+        const data = await response.json();
+        setMovimientos(data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error al cargar los movimientos:', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (isLoading) {
+    return <div style={styles.loading}>Cargando...</div>;
+  }
+
+  if (movimientos.length === 0) {
+    return <div style={styles.noData}>No hay datos disponibles en la base de datos.</div>;
+  }
+
+  return (
+    <div style={styles.container}>
+      {/* Filtros de inventario */}
+      <div className="filtros-inventario" style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        <select className="filtro-select" style={styles.filtroSelect}>
+          <option>Filtrar por Producto</option>
+          {/* Aquí puedes agregar opciones dinámicas */}
+        </select>
+        <input type="text" className="filtro-input" style={styles.filtroInput} placeholder="Buscar..." />
+      </div>
+
+      {/* Tabla de inventario */}
+      <table className="tabla-inventario" style={styles.tablaInventario}>
+        <thead>
+          <tr>
+            <th style={styles.tablaTh}>Producto</th>
+            <th style={styles.tablaTh}>Cantidad</th>
+            <th style={styles.tablaTh}>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {movimientos.map((movimiento) => (
+            <tr key={movimiento.id}>
+              <td style={styles.tablaTd}>{movimiento.producto.nombre}</td>
+              <td style={styles.tablaTd}>{movimiento.cantidad}</td>
+              <td style={styles.tablaTd}>
+                <div className="acciones-btn" style={styles.actions}>
+                  <button>Editar</button>
+                  <button>Eliminar</button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 };
 
 export default InventarioList;

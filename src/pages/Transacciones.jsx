@@ -20,7 +20,7 @@ const GestionStockView = () => {
 
     const fetchProductos = async () => {
         try {
-            const response = await axios.get('https://mercado-cafetero-backend-production.up.railway.app/api/inventario/'); // Ajusta la URL de tu API de productos
+            const response = await axios.get('https://mercado-cafetero-backend-production.up.railway.app/api/productos/'); // Ajusta la URL de tu API de productos
             setProductos(response.data);
         } catch (error) {
             setError('Error al cargar los productos.');

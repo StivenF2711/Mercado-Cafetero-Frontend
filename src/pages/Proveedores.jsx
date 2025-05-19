@@ -4,8 +4,8 @@ import axios from "axios";
 import ProveedorForm from "../components/Proveedor/ProveedorForm";
 import ProveedorList from "../components/Proveedor/ProveedorList";
 
-//const API_URL = "http://127.0.0.1:8000";
-const API_URL = "https://mercado-cafetero-backend-production.up.railway.app";
+const API_URL = "http://127.0.0.1:8000";
+//const API_URL = "https://mercado-cafetero-backend-production.up.railway.app";
 
 function Proveedores() {
   const [proveedores, setProveedores] = useState([]);

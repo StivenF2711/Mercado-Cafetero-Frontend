@@ -115,8 +115,8 @@ const ProveedorList = ({ proveedores, onEdit, onDelete }) => {
               </p>
               <p style={styles.text}>
                 <strong>Días de visita:</strong>{" "}
-                {prov.dias_visita?.length > 0
-                  ? prov.dias_visita.join(", ")
+                {prov.dias_visita && prov.dias_visita.length > 0
+                  ? prov.dias_visita
                   : "No especificados"}
               </p>
             </div>

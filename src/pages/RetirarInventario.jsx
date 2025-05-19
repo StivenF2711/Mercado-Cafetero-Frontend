@@ -18,6 +18,7 @@ function RetirarInventario() {
     const token = getToken();
     if (!token) return navigate("/");
     obtenerProductos(token);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const obtenerProductos = (token) => {

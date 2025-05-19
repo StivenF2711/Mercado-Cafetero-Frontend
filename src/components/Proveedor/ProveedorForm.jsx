@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
   const [proveedor, setProveedor] = useState({
@@ -6,32 +6,38 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
     categoria: "",
     telefono: "",
     email: "",
-    dias_visita: "", // Siempre string
+    dias_visita: "", 
   });
 
   useEffect(() => {
     if (proveedorActual) {
+      console.log("Editando proveedor:", proveedorActual);
       setProveedor({
         ...proveedorActual,
         dias_visita: typeof proveedorActual.dias_visita === "string"
           ? proveedorActual.dias_visita
           : "",
       });
+    } else {
+      console.log("Agregando nuevo proveedor");
     }
   }, [proveedorActual]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProveedor({ ...proveedor, [name]: value });
+    console.log(`Campo actualizado: ${name} = ${value}`);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Proveedor a enviar:", proveedor);
+    console.log("Formulario enviado con proveedor:");
+    console.log(proveedor); // ✅ Aquí se muestra todo el proveedor incluyendo dias_visita
     onSubmit(proveedor);
   };
 
   const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+
   const diasArray = proveedor.dias_visita
     ? proveedor.dias_visita.split(",").map(d => d.trim()).filter(Boolean)
     : [];
@@ -73,6 +79,7 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
       />
 
       <div style={styles.checkboxContainer}>
+        <label style={{ marginBottom: "5px", fontWeight: "bold" }}>Días de visita:</label>
         {diasSemana.map((dia) => {
           const isChecked = diasArray.includes(dia);
 
@@ -100,6 +107,7 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
                   }
 
                   const nuevoValor = updatedDias.join(",");
+                  console.log("Días seleccionados actualizados:", nuevoValor); // ✅ Log importante
                   setProveedor({ ...proveedor, dias_visita: nuevoValor });
                 }}
                 style={{ marginRight: "5px" }}

@@ -63,6 +63,7 @@ const InventarioList = () => {
 
   useEffect(() => {
     cargarDatos();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleAbrirModal = (producto, modo) => {

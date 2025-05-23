@@ -8,7 +8,7 @@ import Inventario from "./pages/Inventario.jsx"; // Importa tu componente de inv
 import Producto from "./pages/Producto.jsx"; // Importa tu componente de producto
 import Transacciones from "./pages/Transacciones.jsx"; // Importa tu componente de entradas y salidas
 import ContartarProv from "./pages/ContactarProv.jsx"; // Importa tu componente de contactar proveedor
-import pedido from "./pages/pedido.jsx" 
+ 
 
 function App() {
   return (

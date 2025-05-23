@@ -50,8 +50,6 @@ function Proveedores() {
       categoria: parseInt(proveedor.categoria),
     };
 
-    console.log("Proveedor:", proveedorAEnviar);
-
     axios
       .post(`${API_URL}/api/proveedores/`, proveedorAEnviar, {
         headers: {
@@ -101,6 +99,7 @@ function Proveedores() {
           categorias={categorias}
           proveedorActual={editarProveedor}
           onSubmit={editarProveedor ? actualizarProveedor : agregarProveedor}
+          proveedores={proveedores} // <--- ESTA LÍNEA ARREGLA EL ERROR
         />
         <ProveedorList
           proveedores={proveedores}
@@ -113,12 +112,18 @@ function Proveedores() {
 }
   
   const styles = {
-    pageContainer: {
+  pageContainer: {
       padding: "20px",
       minHeight: "100vh",
-      backgroundColor: "#111827", // fondo principal
-      color: "#f8f9fc", // texto muy claro
-    },
+      width: "100%",               // ✅ Asegura que no exceda el ancho de la pantalla
+      overflowX: "hidden",         // ✅ Previene scroll horizontal si algún componente se desborda
+      boxSizing: "border-box",     // ✅ Incluye el padding en el ancho total
+      backgroundColor: "#111827",  // fondo principal
+      color: "#f8f9fc",            // texto muy claro
+      display: "flex",             // opcional si quieres usar layout con sidebar
+      flexDirection: "column",
+},
+
     header: {
       width: "100%",
       backgroundColor: "#1f2937", // gris oscuro

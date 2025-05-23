@@ -127,13 +127,13 @@ const styles = {
     textAlign: "center",
   },
   card: {
-    width: "90%",
-    maxWidth: "800px",
-    margin: "0 auto",
-    backgroundColor: "#1e293b", // slate oscuro
-    padding: "20px",
-    borderRadius: "10px",
-    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+  width: "100%",                // ✅ Usa todo el ancho disponible del contenedor
+  maxWidth: "500px",            // ✅ Reduce el ancho máximo para hacerlo más compacto
+  margin: "0 auto",             // Centra la tarjeta horizontalmente
+  backgroundColor: "#1e293b",   // Color de fondo
+  padding: "20px",
+  borderRadius: "10px",
+  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
   },
   loading: {
     color: "#c2c9d6", // gris claro

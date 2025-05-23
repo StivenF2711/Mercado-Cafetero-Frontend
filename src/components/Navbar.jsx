@@ -28,14 +28,15 @@ function Navbar() {
 // 🎨 **Estilos**
 const styles = {
   navbar: {
-    width: "100vw",
-    backgroundColor: "#111827", // fondo oscuro (tailwind gray-900)
-    padding: "12px 20px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.4)",
-  },
+  width: "99.1vw",
+  boxSizing: "border-box",
+  backgroundColor: "#111827",
+  padding: "12px 20px",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  boxShadow: "0 2px 6px rgba(0, 0, 0, 0.4)",
+},
   title: {
     color: "#f9fafb", // casi blanco
     fontSize: "18px",

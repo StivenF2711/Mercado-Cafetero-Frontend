@@ -29,15 +29,18 @@ function Header() {
 
 // 📌 Estilos del Header
 const styles = {
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "15px 30px",
-    backgroundColor: "#2C2C2C",
-    color: "#fff",
-    boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-  },
+header: {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  padding: "15px 30px",
+  backgroundColor: "#2C2C2C",
+  color: "#fff",
+  boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+  width: "100vw",               // ✅ Fuerza a ocupar todo el ancho de la ventana
+  boxSizing: "border-box",      // ✅ Asegura que padding no rompa el layout
+},
+
   logoContainer: {
     display: "flex",
     alignItems: "center",

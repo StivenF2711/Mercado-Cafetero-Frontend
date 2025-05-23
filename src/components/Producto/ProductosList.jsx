@@ -51,42 +51,65 @@ const ProductoList = ({ onEdit, productos: productosProp }) => {
         });
     };
 
-    return (
-        <div style={styles.container}>
-            <h2 style={styles.title}>Lista de Productos</h2>
-            <table style={styles.table}>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Categoría</th>
-                        <th>Proveedor</th>
-                        <th>Precio Compra</th>
-                        <th>Precio Venta</th>
-                        <th>Unidad de Medida</th>
-                        <th>Stock</th> {/* Nueva columna para el stock */}
-                        <th>Acciones</th>
+    const formatDate = (dateString) => {
+        if (!dateString) return "N/A";
+        const date = new Date(dateString);
+        return date.toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+    };
+
+   return (
+    <div style={styles.container}>
+        <h2 style={styles.title}>Lista de Productos</h2>
+        <table style={styles.table}>
+            <thead>
+                <tr>
+                    <th style={styles.th}>Nombre</th>
+                    <th style={styles.th}>Correo Proveedor</th>
+                    <th style={styles.th}>Proveedor</th>
+                    <th style={styles.th}>Unidad de Medida</th>
+                    <th style={styles.th}>Imagen</th>
+                    <th style={styles.th}>Fecha Creación</th>
+                    <th style={styles.th}>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {productos.map((producto) => (
+                    <tr key={producto.id}>
+                        <td style={styles.td}>{producto.nombre}</td>
+                        <td style={styles.td}>{producto.proveedor_email || "Sin correo"}</td>
+                        <td style={styles.td}>
+                            {producto.proveedor_nombre
+                                ? `${producto.proveedor_nombre} (${producto.proveedor_categoria_nombre})`
+                                : "Sin proveedor"}
+                        </td>
+                        <td style={styles.td}>{producto.unidad_medida || "N/A"}</td>
+                        <td style={styles.td}>
+                            {producto.imagen_url ? (
+                                <img 
+                                    src={producto.imagen_url} 
+                                    alt={producto.nombre}
+                                    style={styles.productImage}
+                                />
+                            ) : (
+                                <span style={styles.noImage}>Sin imagen</span>
+                            )}
+                        </td>
+                        <td style={styles.td}>{formatDate(producto.fecha_creacion)}</td>
+                        <td style={styles.td}>
+                            <button style={styles.editBtn} onClick={() => onEdit(producto)}>✏️</button>
+                            <button style={styles.deleteBtn} onClick={() => eliminarProducto(producto.id)}>🗑️</button>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    {productos.map((producto) => (
-                        <tr key={producto.id}>
-                            <td style={styles.td}>{producto.nombre}</td>
-                            <td style={styles.td}>{producto.categoria_nombre || producto.categoria}</td>
-                            <td style={styles.td}>{producto.proveedor_nombre || producto.proveedor}</td>
-                            <td style={styles.td}>${producto.precio_compra}</td>
-                            <td style={styles.td}>${producto.precio_venta}</td>
-                            <td style={styles.td}>{producto.unidad_medida || "N/A"}</td>
-                            <td style={styles.td}>{producto.stock}</td> {/* Mostrar el stock */}
-                            <td style={styles.td}>
-                                <button style={styles.editBtn} onClick={() => onEdit(producto)}>✏️</button>
-                                <button style={styles.deleteBtn} onClick={() => eliminarProducto(producto.id)}>🗑️</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
+                ))}
+            </tbody>
+        </table>
+    </div>
+);
+
 };
 
 const styles = {
@@ -121,6 +144,18 @@ const styles = {
         padding: "10px",
         borderBottom: "1px solid #475569",
         fontSize: "14px",
+    },
+    productImage: {
+        width: "50px",
+        height: "50px",
+        objectFit: "cover",
+        borderRadius: "6px",
+        border: "1px solid #475569",
+    },
+    noImage: {
+        color: "#94a3b8",
+        fontStyle: "italic",
+        fontSize: "12px",
     },
     editBtn: {
         marginRight: "8px",

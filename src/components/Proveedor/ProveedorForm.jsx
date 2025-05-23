@@ -1,38 +1,44 @@
 import React, { useEffect, useState } from "react";
 
-const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
+const ProveedorForm = ({ onSubmit, proveedorActual, categorias, proveedores }) => {
   const [proveedor, setProveedor] = useState({
     nombre: "",
     categoria: "",
     telefono: "",
     email: "",
-    dias_visita: "", 
+    dias_visita: "",
   });
 
   useEffect(() => {
     if (proveedorActual) {
-      console.log("Editando proveedor:", proveedorActual);
       setProveedor({
         ...proveedorActual,
         dias_visita: typeof proveedorActual.dias_visita === "string"
           ? proveedorActual.dias_visita
           : "",
       });
-    } else {
-      console.log("Agregando nuevo proveedor");
     }
   }, [proveedorActual]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProveedor({ ...proveedor, [name]: value });
-    console.log(`Campo actualizado: ${name} = ${value}`);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Formulario enviado con proveedor:");
-    console.log(proveedor); // ✅ Aquí se muestra todo el proveedor incluyendo dias_visita
+
+    const emailExistente = proveedores.some(
+      (p) =>
+        p.email.toLowerCase() === proveedor.email.toLowerCase() &&
+        (!proveedorActual || p.id !== proveedorActual.id)
+    );
+
+    if (emailExistente) {
+      alert("Ya existe un proveedor con este correo electrónico.");
+      return;
+    }
+
     onSubmit(proveedor);
   };
 
@@ -54,6 +60,25 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
         required
       />
 
+      <input
+        type="text"
+        name="telefono"
+        placeholder="Teléfono del proveedor"
+        value={proveedor.telefono}
+        onChange={handleChange}
+        style={styles.input}
+      />
+
+      <input
+        type="email"
+        name="email"
+        placeholder="Correo electrónico del proveedor"
+        value={proveedor.email}
+        onChange={handleChange}
+        style={styles.input}
+        required
+      />
+
       <select
         name="categoria"
         value={proveedor.categoria}
@@ -68,15 +93,6 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
           </option>
         ))}
       </select>
-
-      <input
-        type="text"
-        name="telefono"
-        placeholder="Teléfono del proveedor"
-        value={proveedor.telefono}
-        onChange={handleChange}
-        style={styles.input}
-      />
 
       <div style={styles.checkboxContainer}>
         <label style={{ marginBottom: "5px", fontWeight: "bold" }}>Días de visita:</label>
@@ -107,7 +123,6 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
                   }
 
                   const nuevoValor = updatedDias.join(",");
-                  console.log("Días seleccionados actualizados:", nuevoValor); // ✅ Log importante
                   setProveedor({ ...proveedor, dias_visita: nuevoValor });
                 }}
                 style={{ marginRight: "5px" }}
@@ -117,15 +132,6 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias }) => {
           );
         })}
       </div>
-
-      <input
-        type="email"
-        name="email"
-        placeholder="Correo electrónico del proveedor"
-        value={proveedor.email}
-        onChange={handleChange}
-        style={styles.input}
-      />
 
       <button type="submit" style={styles.addButton}>
         {proveedorActual ? "Actualizar" : "Agregar"}

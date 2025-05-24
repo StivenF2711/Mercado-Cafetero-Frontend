@@ -6,9 +6,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Categorias from "./pages/Categorias.jsx";
 import Inventario from "./pages/Inventario.jsx"; // Importa tu componente de inventario
 import Producto from "./pages/Producto.jsx"; // Importa tu componente de producto
-import Transacciones from "./pages/Transacciones.jsx"; // Importa tu componente de entradas y salidas
-import ContartarProv from "./pages/ContactarProv.jsx"; // Importa tu componente de contactar proveedor
- 
+import Pedidos from "./pages/Pedidos.jsx"; // Importa tu componente de pedidos
 
 function App() {
   return (
@@ -46,31 +44,13 @@ function App() {
               </>
             }
           />
-          <Route
-            path="/transacciones"
-            element={
-              <>
-                <Navbar />
-                <Transacciones />
-              </>
-            }
-          />
-          <Route
-            path="/contactar/:id"
-            element={
-              <>
-                <Navbar />
-                <ContartarProv />
-              </>
-            }
-          />
         </Route>
         <Route
             path="/Pedido"
             element={
               <>
                 <Navbar />
-                <pedido />
+                <Pedidos />
               </>
             }
           />

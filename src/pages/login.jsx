@@ -15,7 +15,7 @@ function Login() {
 
     // Verificar si la URL del backend está definida correctamente
     //const backendUrl = "https://mercado-cafetero-backend-production.up.railway.app";
-    const backendUrl = "http://127.0.0.1:8000";
+    const backendUrl = "https://web-production-46688.up.railway.app";
     if (!backendUrl) {
       setError("Error interno: No se ha configurado la URL del backend.");
       return;

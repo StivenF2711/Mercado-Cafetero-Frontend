@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_URL_VENTAS = "http://127.0.0.1:8000/api/ventas/";
-const API_URL_PRODUCTOS = "http://127.0.0.1:8000/api/productos/";
+const API_URL_VENTAS = "https://web-production-46688.up.railway.app/api/ventas/";
+const API_URL_PRODUCTOS = "https://web-production-46688.up.railway.app/api/productos/";
 
 const ListaVentas = () => {
   const [ventas, setVentas] = useState([]);

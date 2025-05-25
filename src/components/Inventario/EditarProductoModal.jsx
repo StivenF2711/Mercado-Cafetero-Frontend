@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "https://web-production-46688.up.railway.app";
 
 const EditarProductoModal = ({ producto, onClose, onUpdate, modo }) => {
   const [cantidad, setCantidad] = useState(0);

@@ -69,7 +69,7 @@ const RecibirPedidoComponent = ({ pedido, onVolver }) => {
         // No envíes estado si el backend lo maneja automáticamente
       };
 
-      await axios.put(`http://localhost:8000/api/pedidos/${pedido.id}/recibir/`, payload);
+      await axios.put(`https://web-production-46688.up.railway.app/api/pedidos/${pedido.id}/recibir/`, payload);
 
       setExito("Pedido recibido correctamente.");
       onVolver();

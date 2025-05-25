@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL_VENTAS = "http://127.0.0.1:8000/api/ventas/";
-const API_URL_PRODUCTOS = "http://127.0.0.1:8000/api/inventario/productos-disponibles/";
-const API_URL_PREFERENCIA = "http://127.0.0.1:8000/api/ventas/crear-preferencia/";
+const API_URL_VENTAS = "https://web-production-46688.up.railway.app/api/ventas/";
+const API_URL_PRODUCTOS = "https://web-production-46688.up.railway.app/api/inventario/productos-disponibles/";
+const API_URL_PREFERENCIA = "https://web-production-46688.up.railway.app/api/ventas/crear-preferencia/";
 
 const METODOS_PAGO = [
   { value: "efectivo", label: "Efectivo" },

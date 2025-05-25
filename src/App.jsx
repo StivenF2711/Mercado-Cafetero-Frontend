@@ -8,9 +8,9 @@ import Inventario from "./pages/Inventario.jsx"; // Importa tu componente de inv
 import Producto from "./pages/Producto.jsx"; // Importa tu componente de producto
 import Pedidos from "./pages/Pedidos.jsx"; // Importa tu componente de pedidos
 import Ventas from "./pages/Ventas.jsx"; // Importa tu componente de ventas
-import PagoExitoso from "./src/components/pagos/PagoExitoso";
-import PagoFallido from "./components/pagos/PagoFallido";
-import PagoPendiente from "./components/pagos/PagoPendiente";
+import PagoExitoso from "./components/Pagos/PagoExitoso";
+import PagoFallido from "./components/Pagos/PagoFallido";
+import PagoPendiente from "./components/Pagos/PagoPendiente";
 
 function App() {
   return (

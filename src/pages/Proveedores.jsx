@@ -4,7 +4,7 @@ import axios from "axios";
 import ProveedorForm from "../components/Proveedor/ProveedorForm";
 import ProveedorList from "../components/Proveedor/ProveedorList";
 
-const API_URL = "https://web-production-46688.up.railway.app";
+const API_URL = "web-production-46688.up.railway.app";
 //const API_URL = "https://mercado-cafetero-backend-production.up.railway.app";
 
 function Proveedores() {

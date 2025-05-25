@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import EditarProductoModal from "./EditarProductoModal";
 
-const API_URL = "https://web-production-46688.up.railway.app";
+const API_URL = "web-production-46688.up.railway.app";
 
 const InventarioList = () => {
   const [productos, setProductos] = useState([]);

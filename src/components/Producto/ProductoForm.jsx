@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_URL = "https://web-production-46688.up.railway.app"; // Cambia esto a tu URL de API real
+const API_URL = "https://web-production-46688.up.railway.app";
 
 const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActualizado }) => {
     const [formulario, setFormulario] = useState({
@@ -22,20 +22,17 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
         const token = getToken();
         if (!token) return;
 
-        // Cargar categorías al inicio
         axios.get(`${API_URL}/api/categorias/`, {
             headers: { Authorization: `Token ${token}` },
         }).then(res => {
             setCategorias(res.data);
         });
 
-        // Cargar todos los proveedores al inicio
         axios.get(`${API_URL}/api/proveedores/`, {
             headers: { Authorization: `Token ${token}` },
         }).then(res => setProveedores(res.data));
     }, []);
 
-    // Filtrar proveedores cada vez que cambia la categoría seleccionada
     useEffect(() => {
         const token = getToken();
         if (!token) return;
@@ -47,7 +44,6 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
             })
             .then(res => {
                 setProveedores(res.data);
-                // Si el proveedor seleccionado ya no está en la lista filtrada, limpiar selección
                 if (!res.data.find(p => p.id === Number(formulario.proveedor))) {
                     setFormulario(prev => ({ ...prev, proveedor: "" }));
                 }
@@ -56,7 +52,6 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
                 console.error("Error al filtrar proveedores por categoría:", err);
             });
         } else {
-            // Si no hay categoría seleccionada, cargar todos los proveedores
             axios.get(`${API_URL}/api/proveedores/`, {
                 headers: { Authorization: `Token ${token}` },
             }).then(res => setProveedores(res.data));
@@ -67,7 +62,7 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
         if (productoSeleccionado) {
             setFormulario({ 
                 ...productoSeleccionado, 
-                imagen: null // No cargar la imagen para evitar problemas
+                imagen: null
             });
         } else {
             setFormulario({
@@ -92,8 +87,8 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!formulario.nombre || !formulario.categoria || !formulario.unidad_medida) {
-            alert("Por favor complete todos los campos obligatorios (Nombre, Categoría, Unidad de Medida).");
+        if (!formulario.nombre || !formulario.categoria || !formulario.unidad_medida || !formulario.proveedor) {
+            alert("Por favor complete todos los campos obligatorios (Nombre, Categoría, Unidad de Medida y Proveedor).");
             return;
         }
 
@@ -104,10 +99,7 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
         formData.append('nombre', formulario.nombre);
         formData.append('categoria', formulario.categoria);
         formData.append('unidad_medida', formulario.unidad_medida);
-
-        if (formulario.proveedor && formulario.proveedor !== '') {
-            formData.append('proveedor', formulario.proveedor);
-        }
+        formData.append('proveedor', formulario.proveedor);
 
         if (formulario.imagen) {
             console.log("Imagen detectada en formulario:", formulario.imagen.name);
@@ -205,6 +197,7 @@ const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActuali
                 value={formulario.proveedor}
                 onChange={handleChange}
                 style={styles.input}
+                required
             >
                 <option value="">Seleccione un proveedor</option>
                 {proveedores.map((prov) => (

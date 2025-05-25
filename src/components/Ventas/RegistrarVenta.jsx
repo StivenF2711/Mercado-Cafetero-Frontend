@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL_VENTAS = "https://web-production-46688.up.railway.app/api/ventas/";
-const API_URL_PRODUCTOS = "https://web-production-46688.up.railway.app/api/inventario/productos-disponibles/";
-const API_URL_PREFERENCIA = "https://web-production-46688.up.railway.app/api/ventas/crear-preferencia/";
+const API_URL_PRODUCTOS = "web-production-46688.up.railway.app/api/inventario/productos-disponibles/";
+const API_URL_PREFERENCIA = "web-production-46688.up.railway.app/api/ventas/crearpreferencia/";
 
 const METODOS_PAGO = [
   { value: "efectivo", label: "Efectivo" },
@@ -44,6 +43,16 @@ const RegistrarVenta = ({ onVentaCreada }) => {
       }
     }
 
+    // Validar que la cantidad no supere el stock disponible
+    if (field === "cantidad") {
+      const producto = productosDisponibles.find(
+        (p) => p.id === parseInt(nuevosDetalles[index].producto_id)
+      );
+      if (producto && value > producto.stock) {
+        nuevosDetalles[index].cantidad = producto.stock;
+      }
+    }
+
     setDetalles(nuevosDetalles);
   };
 
@@ -70,55 +79,30 @@ const RegistrarVenta = ({ onVentaCreada }) => {
     }
 
     try {
-      // 1. Registrar la venta
-      const response = await axios.post(
-        API_URL_VENTAS,
-        {
-          id_cliente: clienteId ? clienteId.toString() : null,
-          metodo_pago: metodoPago,
-          total: total,
-          detalles: detalles.map((d) => ({
-            producto: parseInt(d.producto_id),
-            cantidad: parseInt(d.cantidad),
-            precio_unitario: parseFloat(d.precio_unitario),
-            subtotal: parseFloat(calcularSubtotal(d)),
-          })),
-        },
-        { headers: { Authorization: `Token ${token}` } }
-      );
+      const payload = {
+        id_cliente: clienteId ? clienteId.toString() : null,
+        metodo_pago: metodoPago,
+        total: total,
+        detalles: detalles.map((d) => ({
+          producto: parseInt(d.producto_id),
+          cantidad: parseInt(d.cantidad),
+          precio_unitario: parseFloat(d.precio_unitario),
+          subtotal: parseFloat(calcularSubtotal(d)),
+        })),
+      };
+
+      const response = await axios.post(API_URL_PREFERENCIA, payload, {
+        headers: { Authorization: `Token ${token}` },
+      });
 
       setError(null);
       onVentaCreada(response.data);
       alert("Venta registrada con éxito");
 
-      // 2. Si el método es mercadopago, crear preferencia y abrir pasarela
-      if (metodoPago === "mercadopago") {
-        try {
-          // Construir items para la preferencia
-          const items = detalles.map((d) => ({
-            id: d.producto_id,
-            title: `Producto ${d.producto_id}`,
-            quantity: Number(d.cantidad),
-            unit_price: Number(d.precio_unitario),
-          }));
-
-          const prefResponse = await axios.post(
-            API_URL_PREFERENCIA,
-            { items },
-            { headers: { Authorization: `Token ${token}` } }
-          );
-
-          const { init_point } = prefResponse.data;
-
-          // Abrir la pasarela en una nueva pestaña
-          window.open(init_point, "_blank");
-        } catch (err) {
-          console.error("Error creando preferencia de pago:", err);
-          alert("La venta se registró, pero hubo un error al iniciar el pago.");
-        }
+      if (metodoPago === "mercadopago" && response.data.init_point) {
+        window.open(response.data.init_point, "_blank");
       }
 
-      // 3. Reiniciar formulario
       setClienteId("");
       setMetodoPago("");
       setDetalles([{ producto_id: "", cantidad: 1, precio_unitario: 0 }]);

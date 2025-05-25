@@ -15,7 +15,7 @@ const VerPedidosComponent = ({ onRecibirPedido }) => {
 
   const obtenerPedidos = async () => {
     try {
-      const response = await axios.get("https://web-production-46688.up.railway.app/api/pedidos/");
+      const response = await axios.get("web-production-46688.up.railway.app/api/pedidos/");
       setPedidos(response.data);
       setCargando(false);
     } catch (error) {
@@ -46,7 +46,7 @@ const VerPedidosComponent = ({ onRecibirPedido }) => {
       console.log("Enviando estado:", estadoNuevo);
 
       await axios.patch(
-        `https://web-production-46688.up.railway.app/api/pedidos/${pedidoSeleccionado.id}/`,
+        `web-production-46688.up.railway.app/api/pedidos/${pedidoSeleccionado.id}/`,
         { estado: estadoNuevo }
       );
 
@@ -111,7 +111,8 @@ const VerPedidosComponent = ({ onRecibirPedido }) => {
                     className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded disabled:opacity-50"
                     disabled={
                       pedido.estado === "recibido" ||
-                      pedido.estado === "cancelado"
+                      pedido.estado === "cancelado" ||
+                      pedido.estado === "incompleto"
                     }
                   >
                     Recibir
@@ -122,7 +123,8 @@ const VerPedidosComponent = ({ onRecibirPedido }) => {
                     className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded disabled:opacity-50"
                     disabled={
                       pedido.estado === "recibido" ||
-                      pedido.estado === "cancelado"
+                      pedido.estado === "cancelado" ||
+                      pedido.estado === "incompleto"
                     }
                   >
                     Cambiar Estado

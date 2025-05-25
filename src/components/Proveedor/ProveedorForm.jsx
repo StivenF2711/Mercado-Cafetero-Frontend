@@ -9,13 +9,16 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias, proveedores }) =
     dias_visita: "",
   });
 
+  const [mensajeConfirmacion, setMensajeConfirmacion] = useState("");
+
   useEffect(() => {
     if (proveedorActual) {
       setProveedor({
         ...proveedorActual,
-        dias_visita: typeof proveedorActual.dias_visita === "string"
-          ? proveedorActual.dias_visita
-          : "",
+        dias_visita:
+          typeof proveedorActual.dias_visita === "string"
+            ? proveedorActual.dias_visita
+            : "",
       });
     }
   }, [proveedorActual]);
@@ -40,16 +43,41 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias, proveedores }) =
     }
 
     onSubmit(proveedor);
+    setMensajeConfirmacion(proveedorActual ? "Proveedor actualizado con éxito." : "Proveedor agregado con éxito.");
+
+    setTimeout(() => setMensajeConfirmacion(""), 3000);
+
+    if (!proveedorActual) {
+      setProveedor({
+        nombre: "",
+        categoria: "",
+        telefono: "",
+        email: "",
+        dias_visita: "",
+      });
+    }
   };
 
-  const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+  const diasSemana = [
+    "Lunes",
+    "Martes",
+    "Miércoles",
+    "Jueves",
+    "Viernes",
+    "Sábado",
+    "Domingo",
+  ];
 
   const diasArray = proveedor.dias_visita
-    ? proveedor.dias_visita.split(",").map(d => d.trim()).filter(Boolean)
+    ? proveedor.dias_visita.split(",").map((d) => d.trim()).filter(Boolean)
     : [];
 
   return (
     <form onSubmit={handleSubmit} style={styles.form}>
+      {mensajeConfirmacion && (
+        <div style={styles.mensajeConfirmacion}>{mensajeConfirmacion}</div>
+      )}
+
       <input
         type="text"
         name="nombre"
@@ -95,7 +123,9 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias, proveedores }) =
       </select>
 
       <div style={styles.checkboxContainer}>
-        <label style={{ marginBottom: "5px", fontWeight: "bold" }}>Días de visita:</label>
+        <label style={{ marginBottom: "5px", fontWeight: "bold" }}>
+          Días de visita:
+        </label>
         {diasSemana.map((dia) => {
           const isChecked = diasArray.includes(dia);
 
@@ -104,7 +134,9 @@ const ProveedorForm = ({ onSubmit, proveedorActual, categorias, proveedores }) =
               key={dia}
               style={{
                 ...styles.checkboxLabel,
-                backgroundColor: isChecked ? "rgb(255, 255, 255)" : "rgba(122, 122, 122, 0.82)",
+                backgroundColor: isChecked
+                  ? "rgb(255, 255, 255)"
+                  : "rgba(122, 122, 122, 0.82)",
                 color: isChecked ? "#851010" : "#333",
               }}
             >
@@ -198,6 +230,15 @@ const styles = {
     fontSize: "12px",
     cursor: "pointer",
     transition: "background-color 0.3s",
+  },
+  mensajeConfirmacion: {
+    backgroundColor: "#22c55e",
+    color: "#ffffff",
+    padding: "8px",
+    borderRadius: "4px",
+    textAlign: "center",
+    fontWeight: "bold",
+    marginBottom: "8px",
   },
 };
 

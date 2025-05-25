@@ -15,7 +15,7 @@ const VerPedidosComponent = ({ onRecibirPedido }) => {
 
   const obtenerPedidos = async () => {
     try {
-      const response = await axios.get("web-production-46688.up.railway.app/api/pedidos/");
+      const response = await axios.get("https://web-production-46688.up.railway.app/api/pedidos/");
       setPedidos(response.data);
       setCargando(false);
     } catch (error) {
@@ -46,7 +46,7 @@ const VerPedidosComponent = ({ onRecibirPedido }) => {
       console.log("Enviando estado:", estadoNuevo);
 
       await axios.patch(
-        `web-production-46688.up.railway.app/api/pedidos/${pedidoSeleccionado.id}/`,
+        `https://web-production-46688.up.railway.app/api/pedidos/${pedidoSeleccionado.id}/`,
         { estado: estadoNuevo }
       );
 

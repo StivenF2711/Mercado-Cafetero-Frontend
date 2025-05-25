@@ -108,13 +108,22 @@ const VerPedidosComponent = ({ onRecibirPedido }) => {
                 <td className="px-4 py-2 space-x-2">
                   <button
                     onClick={() => onRecibirPedido(pedido)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded disabled:opacity-50"
+                    disabled={
+                      pedido.estado === "recibido" ||
+                      pedido.estado === "cancelado"
+                    }
                   >
                     Recibir
                   </button>
+
                   <button
                     onClick={() => abrirModal(pedido)}
-                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded disabled:opacity-50"
+                    disabled={
+                      pedido.estado === "recibido" ||
+                      pedido.estado === "cancelado"
+                    }
                   >
                     Cambiar Estado
                   </button>
@@ -141,8 +150,6 @@ const VerPedidosComponent = ({ onRecibirPedido }) => {
               <option value="pendiente">Pendiente</option>
               <option value="cancelado">Cancelado</option>
               <option value="en proceso">En Proceso</option>
-              <option value="recibido">Recibido</option>
-              <option value="incompleto">Incompleto</option>
             </select>
             <div className="flex justify-end space-x-2">
               <button

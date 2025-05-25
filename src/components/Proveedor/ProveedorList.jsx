@@ -1,27 +1,13 @@
 import React, { useState } from "react";
-import ModalEnviarPedidoProveedor from "./ModalEnviarPedidoProveedor"; // Asegúrate de la ruta correcta
 
 const ProveedorList = ({ proveedores, onEdit, onDelete }) => {
   const [menuAbierto, setMenuAbierto] = useState(null);
-  const [modalAbierto, setModalAbierto] = useState(false);
-  const [proveedorSeleccionado, setProveedorSeleccionado] = useState(null);
 
   const toggleMenu = (id) => {
     setMenuAbierto(menuAbierto === id ? null : id);
   };
 
   const cerrarMenu = () => setMenuAbierto(null);
-
-  const handleContactarClick = (proveedor) => {
-    setProveedorSeleccionado(proveedor);
-    setModalAbierto(true);
-    cerrarMenu(); // Cierra el menú al hacer clic en "Contactar"
-  };
-
-  const handleCerrarModal = () => {
-    setModalAbierto(false);
-    setProveedorSeleccionado(null);
-  };
 
   const styles = {
     list: {
@@ -146,23 +132,11 @@ const ProveedorList = ({ proveedores, onEdit, onDelete }) => {
                   >
                     Eliminar
                   </button>
-                  <button
-                    onClick={() => handleContactarClick(prov)}
-                    style={styles.menuItem}
-                  >
-                    Contactar
-                  </button>
                 </div>
               )}
             </div>
           </div>
         ))
-      )}
-      {modalAbierto && proveedorSeleccionado && (
-        <ModalEnviarPedidoProveedor
-          proveedor={proveedorSeleccionado}
-          onCerrar={handleCerrarModal}
-        />
       )}
     </div>
   );

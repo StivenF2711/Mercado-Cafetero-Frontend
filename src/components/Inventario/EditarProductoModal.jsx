@@ -47,8 +47,8 @@ const EditarProductoModal = ({ producto, onClose, onUpdate, modo }) => {
           `${API_URL}/api/inventario/`,
           {
             producto: producto.id,
-            tipo: "ajuste",  // tipo especial para actualización de precios
-            cantidad: 0, // no afecta el stock
+            tipo: "ajuste",
+            cantidad: 0,
             precio_compra: parseFloat(precioCompra),
             precio_venta: parseFloat(precioVenta),
             observaciones: "Actualización de precios desde frontend",
@@ -87,6 +87,9 @@ const EditarProductoModal = ({ producto, onClose, onUpdate, modo }) => {
               >
                 <option value="entrada">Entrada</option>
                 <option value="salida">Salida</option>
+                <option value="vencimiento">Vencimiento</option>
+                <option value="daño">Daño</option>
+                <option value="pérdida">Pérdida</option>
               </select>
             </label>
 

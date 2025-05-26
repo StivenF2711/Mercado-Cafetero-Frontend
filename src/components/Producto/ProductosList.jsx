@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Swal from 'sweetalert2'; // Importa SweetAlert2
+import Swal from 'sweetalert2';
 
 const API_URL = "https://web-production-46688.up.railway.app"
 
 const ProductoList = ({ onEdit, productos: productosProp }) => {
     const [productos, setProductos] = useState(productosProp);
+    const [searchTerm, setSearchTerm] = useState('');
     const getToken = () => localStorage.getItem("token");
 
     useEffect(() => {
-        setProductos(productosProp); // Actualizar la lista cuando la prop cambia
+        setProductos(productosProp);
     }, [productosProp]);
 
     const eliminarProducto = (id) => {
@@ -61,55 +62,72 @@ const ProductoList = ({ onEdit, productos: productosProp }) => {
         });
     };
 
-   return (
-    <div style={styles.container}>
-        <h2 style={styles.title}>Lista de Productos</h2>
-        <table style={styles.table}>
-            <thead>
-                <tr>
-                    <th style={styles.th}>Nombre</th>
-                    <th style={styles.th}>Correo Proveedor</th>
-                    <th style={styles.th}>Proveedor</th>
-                    <th style={styles.th}>Unidad de Medida</th>
-                    <th style={styles.th}>Imagen</th>
-                    <th style={styles.th}>Fecha Creación</th>
-                    <th style={styles.th}>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {productos.map((producto) => (
-                    <tr key={producto.id}>
-                        <td style={styles.td}>{producto.nombre}</td>
-                        <td style={styles.td}>{producto.proveedor_email || "Sin correo"}</td>
-                        <td style={styles.td}>
-                            {producto.proveedor_nombre
-                                ? `${producto.proveedor_nombre} (${producto.proveedor_categoria_nombre})`
-                                : "Sin proveedor"}
-                        </td>
-                        <td style={styles.td}>{producto.unidad_medida || "N/A"}</td>
-                        <td style={styles.td}>
-                            {producto.imagen_url ? (
-                                <img 
-                                    src={producto.imagen_url} 
-                                    alt={producto.nombre}
-                                    style={styles.productImage}
-                                />
-                            ) : (
-                                <span style={styles.noImage}>Sin imagen</span>
-                            )}
-                        </td>
-                        <td style={styles.td}>{formatDate(producto.fecha_creacion)}</td>
-                        <td style={styles.td}>
-                            <button style={styles.editBtn} onClick={() => onEdit(producto)}>✏️</button>
-                            <button style={styles.deleteBtn} onClick={() => eliminarProducto(producto.id)}>🗑️</button>
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
-    </div>
-);
+    // Filtrar productos según searchTerm (ignore case)
+    const productosFiltrados = productos.filter(producto =>
+        producto.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
+    return (
+        <div style={styles.container}>
+            <h2 style={styles.title}>Lista de Productos</h2>
+
+            <input
+                type="text"
+                placeholder="Buscar producto por nombre..."
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                style={styles.searchInput}
+            />
+
+            <table style={styles.table}>
+                <thead>
+                    <tr>
+                        <th style={styles.th}>Nombre</th>
+                        <th style={styles.th}>Correo Proveedor</th>
+                        <th style={styles.th}>Proveedor</th>
+                        <th style={styles.th}>Unidad de Medida</th>
+                        <th style={styles.th}>Imagen</th>
+                        <th style={styles.th}>Fecha Creación</th>
+                        <th style={styles.th}>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {productosFiltrados.length > 0 ? (
+                        productosFiltrados.map((producto) => (
+                            <tr key={producto.id}>
+                                <td style={styles.td}>{producto.nombre}</td>
+                                <td style={styles.td}>{producto.proveedor_email || "Sin correo"}</td>
+                                <td style={styles.td}>
+                                    {producto.proveedor_nombre
+                                        ? `${producto.proveedor_nombre} (${producto.proveedor_categoria_nombre})`
+                                        : "Sin proveedor"}
+                                </td>
+                                <td style={styles.td}>{producto.unidad_medida || "N/A"}</td>
+                                <td style={styles.td}>
+                                    {producto.imagen_url ? (
+                                        <img
+                                            src={producto.imagen_url}
+                                            alt={producto.nombre}
+                                            style={styles.productImage}
+                                        />
+                                    ) : (
+                                        <span style={styles.noImage}>Sin imagen</span>
+                                    )}
+                                </td>
+                                <td style={styles.td}>{formatDate(producto.fecha_creacion)}</td>
+                                <td style={styles.td}>
+                                    <button style={styles.editBtn} onClick={() => onEdit(producto)}>✏️</button>
+                                    <button style={styles.deleteBtn} onClick={() => eliminarProducto(producto.id)}>🗑️</button>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr><td colSpan="7" style={{ textAlign: "center" }}>No se encontraron productos</td></tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
+    );
 };
 
 const styles = {
@@ -126,6 +144,16 @@ const styles = {
         marginBottom: "16px",
         color: "#f8f9fc",
         textAlign: "center",
+    },
+    searchInput: {
+        width: "100%",
+        padding: "10px",
+        marginBottom: "16px",
+        borderRadius: "6px",
+        border: "1px solid #475569",
+        fontSize: "14px",
+        backgroundColor: "#334155",
+        color: "#f8f9fc",
     },
     table: {
         width: "100%",

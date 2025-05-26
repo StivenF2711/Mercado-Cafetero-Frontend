@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL = "web-production-46688.up.railway.app";
+const API_URL = "https://web-production-46688.up.railway.app";
 
 const CrearPedido = () => {
   const [proveedores, setProveedores] = useState([]);

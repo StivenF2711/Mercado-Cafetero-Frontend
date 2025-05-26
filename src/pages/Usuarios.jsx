@@ -7,21 +7,24 @@ const API_URL = "https://web-production-46688.up.railway.app";
 function Usuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [editarUsuario, setEditarUsuario] = useState(null);
+  const [nuevoUsuario, setNuevoUsuario] = useState({
+    nombre_completo: "",
+    correo: "",
+    password: "",
+    rol: "",
+  });
   const navigate = useNavigate();
 
-  // Obtener token de localStorage
   const getToken = () => localStorage.getItem("token");
 
   useEffect(() => {
     const token = getToken();
     if (!token) {
-      // Si no hay token, redirigir a login
       return navigate("/");
     }
     obtenerUsuarios(token);
   }, [navigate]);
 
-  // Obtener lista de usuarios con token
   const obtenerUsuarios = (token) => {
     axios
       .get(`${API_URL}/api/usuarios/`, {
@@ -29,12 +32,10 @@ function Usuarios() {
       })
       .then((res) => setUsuarios(res.data))
       .catch(() => {
-        // Si hay error (ej: 403), ir a login
         navigate("/");
       });
   };
 
-  // Actualizar usuario con PUT
   const actualizarUsuario = (usuario) => {
     const token = getToken();
     axios
@@ -45,15 +46,55 @@ function Usuarios() {
         },
       })
       .then(() => {
-        obtenerUsuarios(token); // refrescar lista
-        setEditarUsuario(null); // salir modo edición
+        obtenerUsuarios(token);
+        setEditarUsuario(null);
       })
       .catch((err) =>
         console.error("Error al actualizar:", err.response?.data || err)
       );
   };
 
-  // Manejar cambio en inputs edición
+  const eliminarUsuario = (id) => {
+    const token = getToken();
+    if (!window.confirm("¿Estás seguro de eliminar este usuario?")) return;
+    axios
+      .delete(`${API_URL}/api/usuarios/${id}/`, {
+        headers: { Authorization: `Token ${token}` },
+      })
+      .then(() => obtenerUsuarios(token))
+      .catch((err) =>
+        console.error("Error al eliminar:", err.response?.data || err)
+      );
+  };
+
+  const crearUsuario = () => {
+    const token = getToken();
+    const { nombre_completo, correo, password, rol } = nuevoUsuario;
+    if (!nombre_completo || !correo || !password || !rol) {
+      alert("Todos los campos son obligatorios");
+      return;
+    }
+    axios
+      .post(`${API_URL}/api/usuarios/`, nuevoUsuario, {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then(() => {
+        obtenerUsuarios(token);
+        setNuevoUsuario({
+          nombre_completo: "",
+          correo: "",
+          password: "",
+          rol: "",
+        });
+      })
+      .catch((err) =>
+        console.error("Error al crear usuario:", err.response?.data || err)
+      );
+  };
+
   const handleChange = (e, campo) => {
     setEditarUsuario({ ...editarUsuario, [campo]: e.target.value });
   };
@@ -61,6 +102,53 @@ function Usuarios() {
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Gestión de Usuarios</h1>
+
+      <h2 style={styles.subtitle}>Crear nuevo usuario</h2>
+      <div style={styles.usuarioCard}>
+        <input
+          type="text"
+          placeholder="Nombre completo"
+          value={nuevoUsuario.nombre_completo}
+          onChange={(e) =>
+            setNuevoUsuario({ ...nuevoUsuario, nombre_completo: e.target.value })
+          }
+          style={styles.input}
+        />
+        <input
+          type="email"
+          placeholder="Correo"
+          value={nuevoUsuario.correo}
+          onChange={(e) =>
+            setNuevoUsuario({ ...nuevoUsuario, correo: e.target.value })
+          }
+          style={styles.input}
+        />
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={nuevoUsuario.password}
+          onChange={(e) =>
+            setNuevoUsuario({ ...nuevoUsuario, password: e.target.value })
+          }
+          style={styles.input}
+        />
+        <select
+          value={nuevoUsuario.rol}
+          onChange={(e) =>
+            setNuevoUsuario({ ...nuevoUsuario, rol: e.target.value })
+          }
+          style={styles.input}
+        >
+          <option value="">Selecciona un rol</option>
+          <option value="administrador">Administrador</option>
+          <option value="jefe_bodega">Jefe de Bodega</option>
+          <option value="empleado">Empleado</option>
+        </select>
+        <button onClick={crearUsuario} style={styles.btnCrear}>
+          Crear Usuario
+        </button>
+      </div>
+
       <div style={styles.card}>
         {usuarios.map((usuario) => (
           <div key={usuario.id} style={styles.usuarioCard}>
@@ -77,7 +165,7 @@ function Usuarios() {
                   value={editarUsuario.correo}
                   onChange={(e) => handleChange(e, "correo")}
                   style={styles.input}
-                  disabled // No permitir cambiar correo aquí
+                  disabled
                 />
                 <select
                   value={editarUsuario.rol}
@@ -118,6 +206,12 @@ function Usuarios() {
                 >
                   Editar
                 </button>
+                <button
+                  onClick={() => eliminarUsuario(usuario.id)}
+                  style={styles.btnEliminar}
+                >
+                  Eliminar
+                </button>
               </>
             )}
           </div>
@@ -143,6 +237,11 @@ const styles = {
     borderRadius: "8px",
     textAlign: "center",
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+  },
+  subtitle: {
+    fontSize: "18px",
+    marginBottom: "8px",
+    marginTop: "20px",
   },
   card: {
     width: "90%",
@@ -175,6 +274,16 @@ const styles = {
     borderRadius: "6px",
     cursor: "pointer",
   },
+  btnEliminar: {
+    marginTop: "8px",
+    backgroundColor: "#dc2626",
+    color: "#fff",
+    padding: "8px 16px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    marginLeft: "8px",
+  },
   btnGuardar: {
     backgroundColor: "#10b981",
     color: "#fff",
@@ -191,6 +300,15 @@ const styles = {
     border: "none",
     borderRadius: "6px",
     cursor: "pointer",
+  },
+  btnCrear: {
+    backgroundColor: "#3b82f6",
+    color: "#fff",
+    padding: "8px 16px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    marginTop: "8px",
   },
 };
 

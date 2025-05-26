@@ -11,6 +11,7 @@ import Ventas from "./pages/Ventas.jsx"; // Importa tu componente de ventas
 import PagoExitoso from "./components/Pagos/PagoExitoso";
 import PagoFallido from "./components/Pagos/PagoFallido";
 import PagoPendiente from "./components/Pagos/PagoPendiente";
+import Usuarios from "./pages/Usuarios.jsx";
 
 function App() {
   return (
@@ -76,6 +77,18 @@ function App() {
               </>
             }
           />
+        <Route
+          path="/usuarios"
+            element={
+              <>
+                <Navbar />
+                <Usuarios />
+              </>
+            }
+          />
+
+        {/* Rutas de pago */}
+
         <Route path="/pago-exitoso" element={<PagoExitoso />} />
         <Route path="/pago-fallido" element={<PagoFallido />} />
         <Route path="/pago-pendiente" element={<PagoPendiente />} />

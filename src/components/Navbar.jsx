@@ -18,6 +18,7 @@ function Navbar() {
         <Link to="/producto" style={styles.link}>Productos</Link>
         <Link to="/Pedido" style={styles.link}>Pedidos</Link>
         <Link to="/ventas" style={styles.link}>Ventas</Link>
+        <Link to="/usuarios" style={styles.link}>Usuarios</Link>
         <button onClick={handleLogout} style={styles.logoutButton}>
           Cerrar Sesión
         </button>

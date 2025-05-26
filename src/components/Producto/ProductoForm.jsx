@@ -3,292 +3,332 @@ import axios from "axios";
 
 const API_URL = "https://web-production-46688.up.railway.app";
 
-const ProductoForm = ({ agregarProducto, productoSeleccionado, onProductoActualizado }) => {
-    const [formulario, setFormulario] = useState({
+const ProductoForm = ({
+  agregarProducto,
+  productoSeleccionado,
+  onProductoActualizado,
+}) => {
+  const [formulario, setFormulario] = useState({
+    id: null,
+    nombre: "",
+    categoria: "",
+    proveedor: "",
+    imagen: null,
+    unidad_medida: "",
+  });
+
+  const [categorias, setCategorias] = useState([]);
+  const [proveedores, setProveedores] = useState([]);
+
+  const getToken = () => localStorage.getItem("token");
+
+  useEffect(() => {
+    const token = getToken();
+    if (!token) return;
+
+    axios
+      .get(`${API_URL}/api/categorias/`, {
+        headers: { Authorization: `Token ${token}` },
+      })
+      .then((res) => setCategorias(res.data));
+
+    axios
+      .get(`${API_URL}/api/proveedores/`, {
+        headers: { Authorization: `Token ${token}` },
+      })
+      .then((res) => setProveedores(res.data));
+  }, []);
+
+  useEffect(() => {
+    const token = getToken();
+    if (!token) return;
+
+    if (formulario.categoria) {
+      axios
+        .get(`${API_URL}/api/proveedores/filtrar_por_categoria/`, {
+          params: { categoria_id: formulario.categoria },
+          headers: { Authorization: `Token ${token}` },
+        })
+        .then((res) => {
+          setProveedores(res.data);
+          if (!res.data.find((p) => p.id === Number(formulario.proveedor))) {
+            setFormulario((prev) => ({ ...prev, proveedor: "" }));
+          }
+        })
+        .catch((err) => {
+          console.error("Error al filtrar proveedores por categoría:", err);
+        });
+    } else {
+      axios
+        .get(`${API_URL}/api/proveedores/`, {
+          headers: { Authorization: `Token ${token}` },
+        })
+        .then((res) => setProveedores(res.data));
+    }
+  }, [formulario.categoria]);
+
+  useEffect(() => {
+    if (productoSeleccionado) {
+      setFormulario({
+        ...productoSeleccionado,
+        imagen: null,
+      });
+    } else {
+      setFormulario({
         id: null,
         nombre: "",
         categoria: "",
         proveedor: "",
         imagen: null,
         unidad_medida: "",
-    });
+      });
+    }
+  }, [productoSeleccionado]);
 
-    const [categorias, setCategorias] = useState([]);
-    const [proveedores, setProveedores] = useState([]);
+  const handleChange = (e) => {
+    const { name, value, type, files } = e.target;
+    setFormulario((prev) => ({
+      ...prev,
+      [name]: type === "file" ? files[0] : value,
+    }));
+  };
 
-    const getToken = () => localStorage.getItem("token");
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-    useEffect(() => {
-        const token = getToken();
-        if (!token) return;
+    if (
+      !formulario.nombre ||
+      !formulario.categoria ||
+      !formulario.unidad_medida ||
+      !formulario.proveedor
+    ) {
+      alert(
+        "Por favor complete todos los campos obligatorios (Nombre, Categoría, Unidad de Medida y Proveedor)."
+      );
+      return;
+    }
 
-        axios.get(`${API_URL}/api/categorias/`, {
-            headers: { Authorization: `Token ${token}` },
-        }).then(res => {
-            setCategorias(res.data);
-        });
+    const token = getToken();
+    if (!token) return;
 
-        axios.get(`${API_URL}/api/proveedores/`, {
-            headers: { Authorization: `Token ${token}` },
-        }).then(res => setProveedores(res.data));
-    }, []);
+    const formData = new FormData();
+    formData.append("nombre", formulario.nombre);
+    formData.append("categoria", formulario.categoria);
+    formData.append("unidad_medida", formulario.unidad_medida);
+    formData.append("proveedor", formulario.proveedor);
 
-    useEffect(() => {
-        const token = getToken();
-        if (!token) return;
+    if (formulario.imagen) {
+      console.log("Imagen detectada en formulario:", formulario.imagen.name);
+      formData.append("imagen", formulario.imagen);
+    }
 
-        if (formulario.categoria) {
-            axios.get(`${API_URL}/api/proveedores/filtrar_por_categoria/`, {
-                params: { categoria_id: formulario.categoria },
-                headers: { Authorization: `Token ${token}` },
-            })
-            .then(res => {
-                setProveedores(res.data);
-                if (!res.data.find(p => p.id === Number(formulario.proveedor))) {
-                    setFormulario(prev => ({ ...prev, proveedor: "" }));
-                }
-            })
-            .catch(err => {
-                console.error("Error al filtrar proveedores por categoría:", err);
-            });
-        } else {
-            axios.get(`${API_URL}/api/proveedores/`, {
-                headers: { Authorization: `Token ${token}` },
-            }).then(res => setProveedores(res.data));
-        }
-    }, [formulario.categoria]);
+    if (formulario.id) {
+      formData.append("id", formulario.id);
+    }
 
-    useEffect(() => {
+    const method = productoSeleccionado ? "put" : "post";
+    const url = productoSeleccionado
+      ? `${API_URL}/api/productos/${productoSeleccionado.id}/`
+      : `${API_URL}/api/productos/`;
+
+    axios({
+      method: method,
+      url: url,
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Token ${token}`,
+      },
+    })
+      .then((res) => {
         if (productoSeleccionado) {
-            setFormulario({ 
-                ...productoSeleccionado, 
-                imagen: null
-            });
+          onProductoActualizado(res.data);
         } else {
-            setFormulario({
-                id: null,
-                nombre: "",
-                categoria: "",
-                proveedor: "",
-                imagen: null,
-                unidad_medida: "",
-            });
+          agregarProducto(res.data);
         }
-    }, [productoSeleccionado]);
-    
-    const handleChange = (e) => {
-        const { name, value, type, files } = e.target;
-        setFormulario((prev) => ({
-            ...prev,
-            [name]: type === 'file' ? files[0] : value,
-        }));
-    };
+        setFormulario({
+          id: null,
+          nombre: "",
+          categoria: "",
+          proveedor: "",
+          imagen: null,
+          unidad_medida: "",
+        });
+      })
+      .catch((err) => {
+        console.error("Error al guardar/actualizar producto:", err);
+        if (err.response) {
+          console.error("Status:", err.response.status);
+          console.error("Headers:", err.response.headers);
+          console.error("Data:", err.response.data);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        if (!formulario.nombre || !formulario.categoria || !formulario.unidad_medida || !formulario.proveedor) {
-            alert("Por favor complete todos los campos obligatorios (Nombre, Categoría, Unidad de Medida y Proveedor).");
-            return;
+          if (err.response.status === 500) {
+            alert(
+              "Error 500: Problema interno del servidor. Revisa la consola del backend de Django."
+            );
+          } else {
+            alert(`Error ${err.response.status}: ${err.response.statusText}`);
+          }
+        } else if (err.request) {
+          console.error("Solicitud no completada:", err.request);
+          alert("No se pudo completar la solicitud.");
+        } else {
+          console.error("Error:", err.message);
+          alert("Hubo un error inesperado.");
         }
+      });
+  };
 
-        const token = getToken();
-        if (!token) return;
+  const handleCancelar = () => {
+    setFormulario({
+      id: "", // No recomendable si usas lógica basada en null
+      nombre: "",
+      categoria: "",
+      proveedor: "",
+      imagen: "", // ⚠️ Esto puede generar errores en input type="file"
+      unidad_medida: "",
+    });
+  };
 
-        const formData = new FormData();
-        formData.append('nombre', formulario.nombre);
-        formData.append('categoria', formulario.categoria);
-        formData.append('unidad_medida', formulario.unidad_medida);
-        formData.append('proveedor', formulario.proveedor);
+  return (
+    <form onSubmit={handleSubmit} style={styles.card}>
+      <h2 style={styles.title}>
+        {productoSeleccionado ? "Editar Producto" : "Agregar Producto"}
+      </h2>
 
-        if (formulario.imagen) {
-            console.log("Imagen detectada en formulario:", formulario.imagen.name);
-            formData.append('imagen', formulario.imagen);
-        }
+      <input
+        type="text"
+        name="nombre"
+        placeholder="Nombre"
+        value={formulario.nombre}
+        onChange={handleChange}
+        style={styles.input}
+        required
+      />
 
-        if (formulario.id) {
-            formData.append('id', formulario.id);
-        }
+      <select
+        name="categoria"
+        value={formulario.categoria}
+        onChange={handleChange}
+        style={styles.input}
+        required
+      >
+        <option value="">Seleccione una categoría</option>
+        {categorias.map((cat) => (
+          <option key={cat.id} value={cat.id}>
+            {cat.nombre}
+          </option>
+        ))}
+      </select>
 
-        const method = productoSeleccionado ? "put" : "post";
-        const url = productoSeleccionado
-            ? `${API_URL}/api/productos/${productoSeleccionado.id}/`
-            : `${API_URL}/api/productos/`;
+      <select
+        name="proveedor"
+        value={formulario.proveedor}
+        onChange={handleChange}
+        style={styles.input}
+        required
+      >
+        <option value="">Seleccione un proveedor</option>
+        {proveedores.map((prov) => (
+          <option key={prov.id} value={prov.id}>
+            {prov.nombre}
+          </option>
+        ))}
+      </select>
 
-        axios({
-            method: method,
-            url: url,
-            data: formData,
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                Authorization: `Token ${token}`,
-            },
-        })
-            .then((res) => {
-                if (productoSeleccionado) {
-                    onProductoActualizado(res.data);
-                } else {
-                    agregarProducto(res.data);
-                }
-                setFormulario({
-                    id: null,
-                    nombre: "",
-                    categoria: "",
-                    proveedor: "",
-                    imagen: null,
-                    unidad_medida: "",
-                });
-            })
-            .catch((err) => {
-                console.error("Error al guardar/actualizar producto:", err);
-                if (err.response) {
-                    console.error("Status:", err.response.status);
-                    console.error("Headers:", err.response.headers);
-                    console.error("Data:", err.response.data);
+      <select
+        name="unidad_medida"
+        value={formulario.unidad_medida}
+        onChange={handleChange}
+        style={styles.input}
+        required
+      >
+        <option value="">Seleccione una unidad de medida</option>
+        <option value="unidad">Unidad</option>
+        <option value="kilogramo">Kilogramo (kg)</option>
+        <option value="gramo">Gramo (g)</option>
+        <option value="libra">Libra (lb)</option>
+        <option value="onza">Onza (oz)</option>
+        <option value="litro">Litro (L)</option>
+        <option value="mililitro">Mililitro (ml)</option>
+        <option value="galon">Galón</option>
+        <option value="metro">Metro (m)</option>
+        <option value="centimetro">Centímetro (cm)</option>
+        <option value="pulgada">Pulgada (in)</option>
+        <option value="pie">Pie (ft)</option>
+        <option value="yarda">Yarda (yd)</option>
+        <option value="metro_cuadrado">Metro cuadrado (m²)</option>
+        <option value="pie_cuadrado">Pie cuadrado (ft²)</option>
+        <option value="caja">Caja</option>
+        <option value="paquete">Paquete</option>
+        <option value="bolsa">Bolsa</option>
+        <option value="docena">Docena</option>
+        <option value="par">Par</option>
+        <option value="rollo">Rollo</option>
+        <option value="botella">Botella</option>
+        <option value="lata">Lata</option>
+        <option value="frasco">Frasco</option>
+        <option value="sobre">Sobre</option>
+        <option value="tubo">Tubo</option>
+      </select>
 
-                    if (err.response.status === 500) {
-                        alert("Error 500: Problema interno del servidor. Revisa la consola del backend de Django.");
-                    } else {
-                        alert(`Error ${err.response.status}: ${err.response.statusText}`);
-                    }
-                } else if (err.request) {
-                    console.error("Solicitud no completada:", err.request);
-                    alert("No se pudo completar la solicitud.");
-                } else {
-                    console.error("Error:", err.message);
-                    alert("Hubo un error inesperado.");
-                }
-            });
-    };
+      <input
+        type="file"
+        name="imagen"
+        accept="image/*"
+        onChange={handleChange}
+        style={styles.input}
+      />
 
-    return (
-        <form onSubmit={handleSubmit} style={styles.card}>
-            <h2 style={styles.title}>
-                {productoSeleccionado ? "Editar Producto" : "Agregar Producto"}
-            </h2>
-
-            <input
-                type="text"
-                name="nombre"
-                placeholder="Nombre"
-                value={formulario.nombre}
-                onChange={handleChange}
-                style={styles.input}
-                required
-            />
-
-            <select
-                name="categoria"
-                value={formulario.categoria}
-                onChange={handleChange}
-                style={styles.input}
-                required
-            >
-                <option value="">Seleccione una categoría</option>
-                {categorias.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                        {cat.nombre}
-                    </option>
-                ))}
-            </select>
-
-            <select
-                name="proveedor"
-                value={formulario.proveedor}
-                onChange={handleChange}
-                style={styles.input}
-                required
-            >
-                <option value="">Seleccione un proveedor</option>
-                {proveedores.map((prov) => (
-                    <option key={prov.id} value={prov.id}>
-                        {prov.nombre}
-                    </option>
-                ))}
-            </select>
-
-            <select
-                name="unidad_medida"
-                value={formulario.unidad_medida}
-                onChange={handleChange}
-                style={styles.input}
-                required
-            >
-                <option value="">Seleccione una unidad de medida</option>
-                <option value="unidad">Unidad</option>
-                <option value="kilogramo">Kilogramo (kg)</option>
-                <option value="gramo">Gramo (g)</option>
-                <option value="libra">Libra (lb)</option>
-                <option value="onza">Onza (oz)</option>
-                <option value="litro">Litro (L)</option>
-                <option value="mililitro">Mililitro (ml)</option>
-                <option value="galon">Galón</option>
-                <option value="metro">Metro (m)</option>
-                <option value="centimetro">Centímetro (cm)</option>
-                <option value="pulgada">Pulgada (in)</option>
-                <option value="pie">Pie (ft)</option>
-                <option value="yarda">Yarda (yd)</option>
-                <option value="metro_cuadrado">Metro cuadrado (m²)</option>
-                <option value="pie_cuadrado">Pie cuadrado (ft²)</option>
-                <option value="caja">Caja</option>
-                <option value="paquete">Paquete</option>
-                <option value="bolsa">Bolsa</option>
-                <option value="docena">Docena</option>
-                <option value="par">Par</option>
-                <option value="rollo">Rollo</option>
-                <option value="botella">Botella</option>
-                <option value="lata">Lata</option>
-                <option value="frasco">Frasco</option>
-                <option value="sobre">Sobre</option>
-                <option value="tubo">Tubo</option>
-            </select>
-
-            <input
-                type="file"
-                name="imagen"
-                accept="image/*"
-                onChange={handleChange}
-                style={styles.input}
-            />
-
-            <button type="submit" style={styles.submitBtn}>
-                {productoSeleccionado ? "Actualizar" : "Agregar"}
-            </button>
-        </form>
-    );
+      <button type="submit" style={styles.submitBtn}>
+        {productoSeleccionado ? "Actualizar" : "Agregar"}
+      </button>
+      <button type="button" onClick={handleCancelar} style={styles.cancelBtn}>
+        Cancelar
+      </button>
+    </form>
+  );
 };
 
 const styles = {
-    card: {
-        backgroundColor: "#1e293b",
-        padding: "20px",
-        borderRadius: "12px",
-        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
-        color: "#f8f9fc",
-        display: "flex",
-        flexDirection: "column",
-        gap: "12px",
-    },
-    title: {
-        fontSize: "20px",
-        marginBottom: "12px",
-        textAlign: "center",
-    },
-    input: {
-        padding: "10px",
-        borderRadius: "8px",
-        border: "1px solid #334155",
-        backgroundColor: "#0f172a",
-        color: "#f8f9fc",
-    },
-    submitBtn: {
-        padding: "10px",
-        backgroundColor: "#3b82f6",
-        border: "none",
-        borderRadius: "8px",
-        color: "#fff",
-        cursor: "pointer",
-    },
+  card: {
+    backgroundColor: "#1e293b",
+    padding: "20px",
+    borderRadius: "12px",
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+    color: "#f8f9fc",
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+  },
+  title: {
+    fontSize: "20px",
+    marginBottom: "12px",
+    textAlign: "center",
+  },
+  input: {
+    padding: "10px",
+    borderRadius: "8px",
+    border: "1px solid #334155",
+    backgroundColor: "#0f172a",
+    color: "#f8f9fc",
+  },
+  submitBtn: {
+    padding: "10px",
+    backgroundColor: "#3b82f6",
+    border: "none",
+    borderRadius: "8px",
+    color: "#fff",
+    cursor: "pointer",
+  },
+  cancelBtn: {
+    padding: "10px",
+    backgroundColor: "#ef4444",
+    border: "none",
+    borderRadius: "8px",
+    color: "#fff",
+    cursor: "pointer",
+  },
 };
 
 export default ProductoForm;

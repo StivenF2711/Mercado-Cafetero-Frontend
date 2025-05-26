@@ -3,6 +3,110 @@ import axios from "axios";
 
 const API_URL = "https://web-production-46688.up.railway.app";
 
+const styles = {
+  container: {
+    backgroundColor: "rgb(30, 41, 59)",
+    padding: "30px",
+    borderRadius: "10px",
+    boxShadow:
+      "0 2px 6px -1px rgba(0, 0, 0, 0.16), 0 1px 4px -1px rgba(0, 0, 0, 0.04)",
+    maxWidth: "400px",
+    margin: "auto",
+    color: "#dee3ed",
+  },
+  title: {
+    color: "#f8f9fc",
+    fontSize: "24px",
+    fontWeight: "bold",
+    marginBottom: "20px",
+    textAlign: "center",
+  },
+  select: {
+    width: "100%",
+    marginBottom: "16px",
+    padding: "10px",
+    borderRadius: "5px",
+    border: "1px solid #c2c9d6",
+    outline: "none",
+    backgroundColor: "#f8f9fc",
+    color: "#2f3237",
+  },
+  inputNumber: {
+    width: "100%",
+    marginBottom: "16px",
+    padding: "10px",
+    borderRadius: "5px",
+    border: "1px solid #c2c9d6",
+    outline: "none",
+    backgroundColor: "#f8f9fc",
+    color: "#2f3237",
+  },
+  buttonPrimary: {
+    backgroundColor: "#5e636e",
+    color: "white",
+    padding: "10px",
+    borderRadius: "5px",
+    border: "none",
+    cursor: "pointer",
+    fontWeight: "bold",
+    transition: "background 0.3s",
+    marginRight: "8px",
+  },
+  buttonPrimaryHover: {
+    backgroundColor: "#2f3237",
+  },
+  buttonAddProduct: {
+    backgroundColor: "#3b82f6", // azul más brillante para agregar producto
+    color: "white",
+    padding: "10px 16px",
+    borderRadius: "5px",
+    border: "none",
+    cursor: "pointer",
+    fontWeight: "bold",
+    marginBottom: "16px",
+  },
+  buttonDelete: {
+    color: "#D32F2F",
+    cursor: "pointer",
+    background: "none",
+    border: "none",
+    fontWeight: "bold",
+  },
+  productItem: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "8px",
+    color: "#dee3ed",
+  },
+  loadingText: {
+    color: "#9ca3af",
+    marginBottom: "16px",
+  },
+  proveedorName: {
+    marginBottom: "16px",
+    color: "#9ca3af",
+  },
+  buttonSuccess: {
+    backgroundColor: "#22c55e",
+    color: "white",
+    padding: "10px",
+    borderRadius: "5px",
+    border: "none",
+    cursor: "pointer",
+    fontWeight: "bold",
+  },
+  buttonCancel: {
+    backgroundColor: "#dc2626",
+    color: "white",
+    padding: "10px",
+    borderRadius: "5px",
+    border: "none",
+    cursor: "pointer",
+    fontWeight: "bold",
+  },
+};
+
 const CrearPedido = () => {
   const [proveedores, setProveedores] = useState([]);
   const [productos, setProductos] = useState([]);
@@ -120,8 +224,8 @@ const CrearPedido = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-4">
-      <h2 className="text-xl font-bold mb-4">Crear nuevo pedido</h2>
+    <div style={styles.container}>
+      <h2 style={styles.title}>Crear nuevo pedido</h2>
 
       <select
         value={proveedorSeleccionado}
@@ -134,7 +238,7 @@ const CrearPedido = () => {
           }
           setProveedorSeleccionado(e.target.value);
         }}
-        className="w-full mb-4 border p-2 rounded"
+        style={styles.select}
       >
         <option value="">Seleccione un proveedor</option>
         {proveedores.map((p) => (
@@ -146,7 +250,7 @@ const CrearPedido = () => {
 
       {proveedorSeleccionado && (
         <>
-          <p className="mb-2 text-gray-600">
+          <p style={styles.proveedorName}>
             Proveedor:{" "}
             {
               proveedores.find((p) => p.id === parseInt(proveedorSeleccionado))
@@ -154,15 +258,15 @@ const CrearPedido = () => {
             }
           </p>
 
-          <div className="mb-4">
+          <div style={{ marginBottom: "16px" }}>
             {loadingProductos ? (
-              <p className="text-gray-500">Cargando productos...</p>
+              <p style={styles.loadingText}>Cargando productos...</p>
             ) : (
               <>
                 <select
                   value={productoSeleccionado}
                   onChange={(e) => setProductoSeleccionado(e.target.value)}
-                  className="w-full mb-2 border p-2 rounded"
+                  style={styles.select}
                 >
                   <option value="">Seleccione un producto</option>
                   {productos.map((p) => (
@@ -176,14 +280,11 @@ const CrearPedido = () => {
                   type="number"
                   value={cantidad}
                   onChange={(e) => setCantidad(e.target.value)}
-                  className="w-full mb-2 border p-2 rounded"
+                  style={styles.inputNumber}
                   min={1}
                 />
 
-                <button
-                  onClick={agregarProducto}
-                  className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-                >
+                <button onClick={agregarProducto} style={styles.buttonAddProduct}>
                   Agregar producto
                 </button>
               </>
@@ -192,15 +293,16 @@ const CrearPedido = () => {
         </>
       )}
 
-      <ul className="mb-4">
+      <ul style={{ marginBottom: "16px", paddingLeft: 0 }}>
         {detallesPedido.map((p, i) => (
-          <li key={i} className="flex justify-between items-center mb-1">
+          <li key={i} style={styles.productItem}>
             <span>
               {p.producto_nombre} - {p.cantidad_pedida} unidades
             </span>
             <button
               onClick={() => eliminarProducto(i)}
-              className="text-red-500 hover:underline"
+              style={styles.buttonDelete}
+              aria-label="Eliminar producto"
             >
               Eliminar
             </button>
@@ -208,21 +310,15 @@ const CrearPedido = () => {
         ))}
       </ul>
 
-      <div className="flex space-x-2">
+      <div style={{ display: "flex", gap: "8px" }}>
         {detallesPedido.length > 0 && (
-          <button
-            onClick={crearPedido}
-            className="bg-green-600 text-white px-4 py-2 rounded"
-          >
+          <button onClick={crearPedido} style={styles.buttonSuccess}>
             Crear pedido
           </button>
         )}
 
         {(proveedorSeleccionado || detallesPedido.length > 0) && (
-          <button
-            onClick={cancelarPedido}
-            className="bg-red-600 text-white px-4 py-2 rounded"
-          >
+          <button onClick={cancelarPedido} style={styles.buttonCancel}>
             Cancelar pedido
           </button>
         )}

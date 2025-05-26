@@ -11,6 +11,7 @@ const InventarioList = () => {
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [modoEdicion, setModoEdicion] = useState("stock");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const getToken = () => localStorage.getItem("token");
 
@@ -41,7 +42,7 @@ const InventarioList = () => {
         inventarioMap[inv.producto] = inv;
       });
 
-      // Mapear productos y asignar stock y precios usando obtener_precios_actuales
+      // Mapear productos y asignar stock y precios
       const productosConDatos = productosData.map((prod) => {
         const inv = inventarioMap[prod.id] || {};
         return {
@@ -63,7 +64,7 @@ const InventarioList = () => {
 
   useEffect(() => {
     cargarDatos();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleAbrirModal = (producto, modo) => {
@@ -77,64 +78,81 @@ const InventarioList = () => {
     setProductoSeleccionado(null);
   };
 
+  // Filtrar productos por nombre, categoria_nombre o unidad_medida (ignore case)
+  const productosFiltrados = productos.filter((producto) =>
+    producto.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (producto.categoria_nombre && producto.categoria_nombre.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (producto.unidad_medida && producto.unidad_medida.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
   if (cargando) return <div>Cargando inventario...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div style={styles.container}>
       <h2 style={styles.title}>Inventario de Productos</h2>
+
+      {/* Barra de búsqueda */}
+      <input
+        type="text"
+        placeholder="Buscar por nombre, categoría o unidad..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        style={styles.searchInput}
+      />
+
       <div style={styles.productList}>
-        {productos.map((producto) => {
-          const imageUrl = producto.imagen?.startsWith("http")
-            ? producto.imagen
-            : `${API_URL}${producto.imagen}`;
+        {productosFiltrados.length > 0 ? (
+          productosFiltrados.map((producto) => {
+            const imageUrl = producto.imagen?.startsWith("http")
+              ? producto.imagen
+              : `${API_URL}${producto.imagen}`;
 
-          return (
-            <div key={producto.id} style={styles.productCard}>
-              {producto.imagen ? (
-                <img
-                  src={imageUrl}
-                  alt={producto.nombre}
-                  style={styles.productImage}
-                />
-              ) : (
-                <div style={styles.noImage}>Sin imagen</div>
-              )}
-              <h3 style={styles.productName}>{producto.nombre}</h3>
-              <p style={styles.productCategory}>
-                Categoría: {producto.categoria_nombre}
-              </p>
-              <p style={styles.productStock}>
-                Stock: {producto.stock} {producto.unidad_medida}
-              </p>
-              <p style={styles.productPrice}>
-                Precio Compra: ${producto.precio_compra}
-              </p>
-              <p style={styles.productPrice}>
-                Precio Venta: ${producto.precio_venta}
-              </p>
-              <button
-                onClick={() => handleAbrirModal(producto, "stock")}
-                style={styles.editButton}
-              >
-                Modificar stock
-              </button>
-              <button
-                onClick={() => handleAbrirModal(producto, "precios")}
-                style={styles.editButtonSecondary}
-              >
-                Editar precios
-              </button>
-            </div>
-          );
-        })}
+            return (
+              <div key={producto.id} style={styles.productCard}>
+                {producto.imagen ? (
+                  <img
+                    src={imageUrl}
+                    alt={producto.nombre}
+                    style={styles.productImage}
+                  />
+                ) : (
+                  <div style={styles.noImage}>Sin imagen</div>
+                )}
+                <h3 style={styles.productName}>{producto.nombre}</h3>
+                <p style={styles.productCategory}>
+                  Categoría: {producto.categoria_nombre}
+                </p>
+                <p style={styles.productStock}>
+                  Stock: {producto.stock} {producto.unidad_medida}
+                </p>
+                <p style={styles.productPrice}>
+                  Precio Compra: ${producto.precio_compra}
+                </p>
+                <p style={styles.productPrice}>
+                  Precio Venta: ${producto.precio_venta}
+                </p>
+                <button
+                  onClick={() => handleAbrirModal(producto, "stock")}
+                  style={styles.editButton}
+                >
+                  Modificar stock
+                </button>
+                <button
+                  onClick={() => handleAbrirModal(producto, "precios")}
+                  style={styles.editButtonSecondary}
+                >
+                  Editar precios
+                </button>
+              </div>
+            );
+          })
+        ) : (
+          <div style={{ color: "#f8f9fc", textAlign: "center", marginTop: 20 }}>
+            No hay productos que coincidan con la búsqueda.
+          </div>
+        )}
       </div>
-
-      {productos.length === 0 && !cargando && (
-        <div style={{ color: "#f8f9fc", textAlign: "center", marginTop: 20 }}>
-          No hay productos en el inventario.
-        </div>
-      )}
 
       {mostrarModal && productoSeleccionado && (
         <EditarProductoModal
@@ -160,6 +178,18 @@ const styles = {
     textAlign: "center",
     color: "#f8f9fc",
   },
+  searchInput: {
+    width: "100%",
+    padding: "10px 15px",
+    marginBottom: "20px",
+    borderRadius: "8px",
+    border: "1px solid #475569",
+    backgroundColor: "#1e293b",
+    color: "#f8f9fc",
+    fontSize: "16px",
+    outline: "none",
+    transition: "border-color 0.3s ease",
+  },
   productList: {
     display: "flex",
     flexWrap: "wrap",
@@ -180,8 +210,8 @@ const styles = {
     color: "#f8f9fc",
   },
   productImage: {
-    width: "200",
-    height: "120",
+    width: "100%",
+    height: "120px",
     borderRadius: "4px",
     marginBottom: "10px",
     objectFit: "cover",

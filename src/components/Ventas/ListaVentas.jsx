@@ -34,25 +34,33 @@ const ListaVentas = () => {
       return;
     }
 
+    // Mapear razón a tipo_movimiento válido para backend
+    let tipoMovimiento = "";
+    if (razon === "devolucion") tipoMovimiento = "devolución";
+    else if (razon === "daño") tipoMovimiento = "devolución_daño";
+    else if (razon === "vencimiento") tipoMovimiento = "devolución_vencimiento";
+    else {
+      alert("Razón inválida.");
+      return;
+    }
+
     try {
-      if (razon === "devolución") {
-        // Solo sumar al inventario si es devolución normal
-        for (const detalle of venta.detalles) {
-          await axios.post(
-            "https://web-production-46688.up.railway.app/api/inventario/",
-            {
-              producto: detalle.producto,
-              tipo: "devolución",
-              cantidad: detalle.cantidad,
-              observaciones: `Devolución por ${razon} de la venta #${venta.id}`,
+      // Para cualquiera de los tipos, se suma al inventario con el tipo correcto
+      for (const detalle of venta.detalles) {
+        await axios.post(
+          "https://web-production-46688.up.railway.app/api/inventario/",
+          {
+            producto: detalle.producto,
+            tipo: tipoMovimiento,
+            cantidad: detalle.cantidad,
+            observaciones: `Devolución por ${razon} de la venta #${venta.id}`,
+          },
+          {
+            headers: {
+              Authorization: `Token ${token}`,
             },
-            {
-              headers: {
-                Authorization: `Token ${token}`,
-              },
-            }
-          );
-        }
+          }
+        );
       }
 
       // Actualizar estado de la venta a "devuelta"
@@ -146,7 +154,8 @@ const ListaVentas = () => {
             disabled={venta.estado === "devuelta"}
             style={{
               padding: "8px 12px",
-              backgroundColor: venta.estado === "devuelta" ? "#6c757d" : "#dc3545",
+              backgroundColor:
+                venta.estado === "devuelta" ? "#6c757d" : "#dc3545",
               color: "#fff",
               border: "none",
               borderRadius: "4px",
